@@ -1,1 +1,2 @@
-esp_http_server
+esp_http_server arduion ide (.ino)
+supported sensors: DHT11/DHT11
