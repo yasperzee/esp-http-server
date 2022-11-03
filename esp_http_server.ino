@@ -1,6 +1,4 @@
-
-
-/*************************** weather_esp01_dht_http.ino ***********************
+/**************************** weather_esp01_dht_http.ino ***********************
 
   Description:  Read temperature & humidity from DHT11 & DHT22 sensor.
                 ESP-01 acts as webserver.
@@ -14,7 +12,7 @@
 
   IDE & tools:  - Arduino IDE 1.8.8, UBUNTU 18.04 LTS
 
-  Librarys:     - https://github.com/esp8266/Arduino
+  Librarys:     - uhttps://github.com/esp8266/Arduino
                 - https://github.com/adafruit/DHT-sensor-library
                 - https://github.com/adafruit/Adafruit_Sensor
 
@@ -24,8 +22,10 @@
 *******************************************************************************/
 
 /*------------------------------------------------------------------------------
-
-    Version 0.1   11'22    Yasperzee   Pure html, Baseline for Rest/Json
+  
+    Version 0.1     11'22    Yasperzee    Baseline, pure HTML
+    
+    Version 1.1b    4'19      Yasperzee   something. . .
  
 
 ------------------------------------------------------------------------------*/
@@ -33,7 +33,7 @@
 // includes
 #include "ssid.h"  // SSID and PASS strings for local network
 #include <Arduino.h>
-// #include <Adafruit_Sensor.h>
+#include <Adafruit_Sensor.h>
 #include "ESP8266WiFi.h"
 #include "DHT.h"
 
@@ -42,13 +42,13 @@
 String NODEMCU_STR  =  "ESP-01";
 
 // Increment number for each node
-String NODE_ID_STR  =  "Node-03";
+String NODE_ID_STR  =  "Node-00001";
 
 // Select DHT sensor in use, select "SENSOR_STR" also !
-#define DHT_TYPE    DHT11
-String SENSOR_STR   =  "DHT-11";
-//#define DHT_TYPE 	DHT22
-//String SENSOR_STR =  "DHT-22";
+//#define DHT_TYPE    DHT11
+//String SENSOR_STR   =  "DHT-11";
+#define DHT_TYPE 	DHT22
+String SENSOR_STR =  "DHT-22";
 
 //#define DHT_PIN 	0 // ESP-01 gpio 0
 #define DHT_PIN 	2 // ESP-01 gpio 2
@@ -94,7 +94,7 @@ void setup()
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED)
         {
-        delay(RETRY_WIFI_TIME);
+        delay(500);
         Serial.print(".");
         }
     // Print local IP address and start web server
@@ -138,15 +138,17 @@ void loop()
                         client.println();
 
                         // GET values
-                        // if (header.indexOf("GET /TH/on") >= 0)
                         if (header.indexOf("GET /TH/data") >= 0)
                             {
                              getValuesState = "on";
                             }
-                        //else if (header.indexOf("GET /TH/off") >= 0)
                         else if (header.indexOf("GET /TH/info") >= 0)
                             {
                             getValuesState= "off";
+                            }
+                        else
+                            {
+                            getValuesState= "error";
                             }
                         // Send the HTML web page
                         String tmp = build_html();
@@ -218,8 +220,8 @@ String build_html(void)
     // Display temperature and pressure values
     if (getValuesState=="off")
         {
-        webpage += "<p>Node info </p>";
-        webpage += "<p><a href=\"/TH/data\"><button class=\"button\">Get values</button></a></p>";
+        webpage += "<p>Get measurements </p>";
+        webpage += "<p><a href=\"/TH/data\"><button class=\"button\">GET</button></a></p>";
         webpage += "<p> Info: ";
         //webpage += "<p>";
         webpage +=  NODE_ID_STR;
@@ -229,24 +231,33 @@ String build_html(void)
         webpage +=  SENSOR_STR;
         webpage += "</p>";
         }
-    else
+    if (getValuesState=="on")
         {
         values = read_dht_sensor();
-        webpage += "<p>Measurements </p>";
-        webpage += "<p><a href=\"/TH/info\"><button class=\"button button2\">Get Node info</button></a></p>";
+        webpage += "<p>Got measurements </p>";
+        webpage += "<p><a href=\"/TH/info\"><button class=\"button button2\">GOT</button></a></p>";
         // Print temperature and humidity values here
         webpage += "<p>Temperature: ";
         webpage += (values.temperature);
-        webpage += " C";
+        webpage += " °C";
         webpage += "<br/>";
-        webpage += "Humidity:    ";
+        webpage += "Humidity: ";
         webpage += (values.humidity);
         webpage += " %";
         webpage += "<p>";
         }
+    else
+        {
+        webpage += "<p>Unsupported request </p>";
+        webpage += "<p><a href=\"/TH/error\"><button class=\"button\">GET</button></a></p>";
+        webpage += "<p> Unknown request: ";
+        //webpage += "<p>";
+        webpage +=  NODE_ID_STR;
+        webpage += "</p>";
+        }
+    
     webpage += "</body></html>";
     // The HTTP response ends with another blank line
     webpage += "";
-
     return (webpage);
     } // build_html
