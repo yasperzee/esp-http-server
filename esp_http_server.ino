@@ -78,7 +78,7 @@ struct Values
 // Functions
 //Values read_dht11(void);
 Values read_dht_sensor(void);
-String build_html(void);
+String build_pure_html(void);
 
 // Set web server port number to 80
 WiFiServer server(PORT);
@@ -151,7 +151,7 @@ void loop()
                             getValuesState= "error";
                             }
                         // Send the HTML web page
-                        String tmp = build_html();
+                        String tmp = build_pure_html();
                         //Serial.println(tmp);
                         client.println(tmp);
                         //client.println("Connection closed.");
@@ -201,7 +201,7 @@ Values read_dht_sensor(void)
     return values;
     }
 
-String build_html(void)
+String build_pure_html(void)
     {
     Values values;
     String webpage;
@@ -221,7 +221,7 @@ String build_html(void)
     if (getValuesState=="off")
         {
         webpage += "<p>Get measurements </p>";
-        webpage += "<p><a href=\"/TH/data\"><button class=\"button\">GET</button></a></p>";
+        webpage += "<p><a href=\"/TH/data\"><button class=\"button\">get data</button></a></p>"; // Next state
         webpage += "<p> Info: ";
         //webpage += "<p>";
         webpage +=  NODE_ID_STR;
@@ -234,8 +234,8 @@ String build_html(void)
     if (getValuesState=="on")
         {
         values = read_dht_sensor();
-        webpage += "<p>Got measurements </p>";
-        webpage += "<p><a href=\"/TH/info\"><button class=\"button button2\">GOT</button></a></p>";
+        webpage += "<p>Get node info </p>";
+        webpage += "<p><a href=\"/TH/info\"><button class=\"button button2\">get info</button></a></p>"; // Next state
         // Print temperature and humidity values here
         webpage += "<p>Temperature: ";
         webpage += (values.temperature);
@@ -260,4 +260,4 @@ String build_html(void)
     // The HTTP response ends with another blank line
     webpage += "";
     return (webpage);
-    } // build_html
+    } // build_pure_html
