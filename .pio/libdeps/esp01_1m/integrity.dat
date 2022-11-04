@@ -1,0 +1,3 @@
+build_pure_html
+read_dht_sensor
+adafruit/DHT sensor library@^1.4.4

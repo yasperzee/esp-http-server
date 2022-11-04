@@ -1,4 +1,4 @@
-/**************************** weather_esp01_dht_http.ino ***********************
+/**************************** esp_http_server.cpp ***********************
 
   Description:  Read temperature & humidity from DHT11 & DHT22 sensor.
                 ESP-01 acts as webserver.
@@ -12,13 +12,16 @@
                 - https://github.com/adafruit/DHT-sensor-library
                 - https://github.com/adafruit/Adafruit_Sensor
 
-  IDE & tools:  - Arduino IDE 1.8.8, UBUNTU 18.04 LTS
+  IDE & tools:  - VSCode, Platformio
 
   References:   -
 *******************************************************************************/
 
 /*------------------------------------------------------------------------------
   
+    Version 0.2     11'22     Yasperzee     Imported to platformio
+    
+
     Version 0.1     11'22     Yasperzee     Baseline, pure HTML
     
     Version 1.1b    4'19      Yasperzee     Something. . .
@@ -28,47 +31,11 @@
 
 // includes
 #include "ssid.h"  // SSID and PASS strings for local network
-#include <Arduino.h>
-#include <Adafruit_Sensor.h>
-#include "ESP8266WiFi.h"
-#include "DHT.h"
-
-//****** Configurations ********************************************************
-//Select string for Node, used for information and debug
-String NODEMCU_STR  =  "ESP-01";
-
-// Increment number for each node
-String NODE_ID_STR  =  "Node-00001";
-
-// Select DHT sensor in use, select "SENSOR_STR" also !
-//#define DHT_TYPE      DHT11
-//String SENSOR_STR =   "DHT-11";
-#define DHT_TYPE 	  DHT22
-String SENSOR_STR = "DHT-22";
-
-#define DHT_PIN 	2 // ESP-01 gpio 2
-
-// *****************************************************************************
-
-// defines
-#define PORT            80
-#define BAUDRATE        115200
-#define WIFI_RETRY_TIME 1000 //ms
-
-// constants
-const float ErrorValue = -999.9;
-// variables
-String getValuesState   = "off";
+#include "setup.h"
+#include "read_dht_sensor.h"
 
 // Variable to store the HTTP request
 String header;
-
-// values from DHT read_dht_sensor
-struct Values
-    {
-    float temperature;
-    float humidity;
-    };
 
 // Functions
 Values read_dht_sensor(void);
@@ -76,8 +43,10 @@ String build_pure_html(void);
 
 // Set web server port number to 80
 WiFiServer server(PORT);
+
 // Initialize DHT sensor.
 DHT dht(DHT_PIN, DHT_TYPE);
+
 
 void setup()
     {
@@ -172,28 +141,6 @@ void loop()
         }  // if(client)
     } // loop
 
-Values read_dht_sensor(void)
-    {
-    float T,H;
-    Values values;
-
-    // Reading temperature or humidity takes about 250 milliseconds!
-    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-    H = dht.readHumidity();
-    // Read temperature as Celsius (the default)
-    T = dht.readTemperature();
-    values.humidity = H;
-    values.temperature = T;
-    // Check if any reads failed and exit early (to try again).
-    if (isnan(H) || isnan(T))
-        {
-        Serial.println(F("Failed to read DHT sensor!"));
-        values.temperature = ErrorValue;
-        values.humidity = ErrorValue;
-      	}
-    return values;
-    }
-
 String build_pure_html(void)
     {
     Values values;
@@ -254,3 +201,27 @@ String build_pure_html(void)
     webpage += "";
     return (webpage);
     } // build_pure_html
+
+   
+ Values read_dht_sensor(void)
+    {
+    float T,H;
+    Values values;
+
+    // Reading temperature or humidity takes about 250 milliseconds!
+    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+    H = dht.readHumidity();
+    // Read temperature as Celsius (the default)
+    T = dht.readTemperature();
+    values.humidity = H;
+    values.temperature = T;
+    // Check if any reads failed and exit early (to try again).
+    if (isnan(H) || isnan(T))
+        {
+        Serial.println(F("Failed to read DHT sensor!"));
+        values.temperature = ErrorValue;
+        values.humidity = ErrorValue;
+      	}
+    return values;
+    }
+
