@@ -222,14 +222,15 @@ String build_pure_html(void)
         {
         webpage += "<p>Get measurements </p>";
         webpage += "<p><a href=\"/TH/data\"><button class=\"button\">get data</button></a></p>"; // Next state
-        webpage += "<p> Info: ";
-        //webpage += "<p>";
+        webpage += "<info>";
+        //webpage += "<p>;
+        webpage +=  "Info: ";
         webpage +=  NODE_ID_STR;
         webpage += ": ";
         webpage +=  NODEMCU_STR;
         webpage += " / ";
         webpage +=  SENSOR_STR;
-        webpage += "</p>";
+        webpage += "</info>";
         }
     if (getValuesState=="on")
         {
@@ -237,23 +238,31 @@ String build_pure_html(void)
         webpage += "<p>Get node info </p>";
         webpage += "<p><a href=\"/TH/info\"><button class=\"button button2\">get info</button></a></p>"; // Next state
         // Print temperature and humidity values here
-        webpage += "<p>Temperature: ";
+        webpage += "<data>";
+        //webpage += "<h1>";
+        //webpage += "<p>";
+        webpage += "Temperature: ";
         webpage += (values.temperature);
-        webpage += " °C";
+        webpage += " C";
         webpage += "<br/>";
-        webpage += "Humidity: ";
+        webpage += "Humidity:    ";
         webpage += (values.humidity);
         webpage += " %";
-        webpage += "<p>";
+        // webpage += "<p>";
+        //webpage += "</h1>";
+        webpage += "</data>";
         }
     else
         {
         webpage += "<p>Unsupported request </p>";
-        webpage += "<p><a href=\"/TH/error\"><button class=\"button\">GET</button></a></p>";
-        webpage += "<p> Unknown request: ";
+        webpage += "<p><a href=\"/TH/error\"><button class=\"button\">ERROR</button></a></p>";
+        webpage += "<error>";
+        //webpage += "<p>";
+        webpage += "Unknown request: ";
         //webpage += "<p>";
         webpage +=  NODE_ID_STR;
-        webpage += "</p>";
+        //webpage += "</p>";
+        webpage += "</error>";
         }
     
     webpage += "</body></html>";
