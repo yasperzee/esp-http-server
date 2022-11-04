@@ -245,7 +245,7 @@ String build_pure_html(void)
         webpage += (values.temperature);
         webpage += " C";
         webpage += "<br/>";
-        webpage += "Humidity:    ";
+        webpage += "Humidity: ";
         webpage += (values.humidity);
         webpage += " %";
         // webpage += "<p>";
