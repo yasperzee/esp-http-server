@@ -8,10 +8,6 @@
   Components:   - ESP-01 esp8266 NodeMcu
                 - DHT11 or DHT22 temperature and humidity sensor
 
-  The circuit:  - DHT-XX Data -> ESP-01 gpio 0
-
-  IDE & tools:  - Arduino IDE 1.8.8, UBUNTU 18.04 LTS
-
   Librarys:     - uhttps://github.com/esp8266/Arduino
                 - https://github.com/adafruit/DHT-sensor-library
                 - https://github.com/adafruit/Adafruit_Sensor
@@ -23,9 +19,9 @@
 
 /*------------------------------------------------------------------------------
   
-    Version 0.1     11'22    Yasperzee    Baseline, pure HTML
+    Version 0.1     11'22     Yasperzee     Baseline, pure HTML
     
-    Version 1.1b    4'19      Yasperzee   something. . .
+    Version 1.1b    4'19      Yasperzee     Something. . .
  
 
 ------------------------------------------------------------------------------*/
@@ -45,12 +41,11 @@ String NODEMCU_STR  =  "ESP-01";
 String NODE_ID_STR  =  "Node-00001";
 
 // Select DHT sensor in use, select "SENSOR_STR" also !
-//#define DHT_TYPE    DHT11
-//String SENSOR_STR   =  "DHT-11";
-#define DHT_TYPE 	DHT22
-String SENSOR_STR =  "DHT-22";
+//#define DHT_TYPE      DHT11
+//String SENSOR_STR =   "DHT-11";
+#define DHT_TYPE 	  DHT22
+String SENSOR_STR = "DHT-22";
 
-//#define DHT_PIN 	0 // ESP-01 gpio 0
 #define DHT_PIN 	2 // ESP-01 gpio 2
 
 // *****************************************************************************
@@ -58,7 +53,7 @@ String SENSOR_STR =  "DHT-22";
 // defines
 #define PORT            80
 #define BAUDRATE        115200
-#define RETRY_WIFI_TIME 1000 //ms
+#define WIFI_RETRY_TIME 1000 //ms
 
 // constants
 const float ErrorValue = -999.9;
@@ -76,7 +71,6 @@ struct Values
     };
 
 // Functions
-//Values read_dht11(void);
 Values read_dht_sensor(void);
 String build_pure_html(void);
 
@@ -94,7 +88,7 @@ void setup()
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED)
         {
-        delay(500);
+        delay(WIFI_RETRY_TIME);
         Serial.print(".");
         }
     // Print local IP address and start web server
@@ -178,7 +172,6 @@ void loop()
         }  // if(client)
     } // loop
 
-//Values read_dht11(void)
 Values read_dht_sensor(void)
     {
     float T,H;
@@ -220,10 +213,9 @@ String build_pure_html(void)
     // Display temperature and pressure values
     if (getValuesState=="off")
         {
-        webpage += "<p>Get measurements </p>";
-        webpage += "<p><a href=\"/TH/data\"><button class=\"button\">get data</button></a></p>"; // Next state
+        webpage += "<p>Node information </p>";
+        webpage += "<p><a href=\"/TH/data\"><button class=\"button\">Get data</button></a></p>"; // Next state
         webpage += "<info>";
-        //webpage += "<p>;
         webpage +=  "Info: ";
         webpage +=  NODE_ID_STR;
         webpage += ": ";
@@ -232,15 +224,13 @@ String build_pure_html(void)
         webpage +=  SENSOR_STR;
         webpage += "</info>";
         }
-    if (getValuesState=="on")
+    else if (getValuesState=="on")
         {
         values = read_dht_sensor();
-        webpage += "<p>Get node info </p>";
-        webpage += "<p><a href=\"/TH/info\"><button class=\"button button2\">get info</button></a></p>"; // Next state
+        webpage += "<p>Measurements </p>";
+        webpage += "<p><a href=\"/TH/info\"><button class=\"button button2\">Get Node info</button></a></p>"; // Next state
         // Print temperature and humidity values here
         webpage += "<data>";
-        //webpage += "<h1>";
-        //webpage += "<p>";
         webpage += "Temperature: ";
         webpage += (values.temperature);
         webpage += " C";
@@ -248,20 +238,14 @@ String build_pure_html(void)
         webpage += "Humidity: ";
         webpage += (values.humidity);
         webpage += " %";
-        // webpage += "<p>";
-        //webpage += "</h1>";
         webpage += "</data>";
         }
     else
         {
         webpage += "<p>Unsupported request </p>";
-        webpage += "<p><a href=\"/TH/error\"><button class=\"button\">ERROR</button></a></p>";
+        webpage += "<p><a href=\"/TH/info\"><button class=\"button button2\">Get Node info</button></a></p>"; // Next state
         webpage += "<error>";
-        //webpage += "<p>";
-        webpage += "Unknown request: ";
-        //webpage += "<p>";
-        webpage +=  NODE_ID_STR;
-        //webpage += "</p>";
+        webpage += "Unknown request. ";
         webpage += "</error>";
         }
     
