@@ -1,6 +1,17 @@
 #ifndef READ_DHT_SENSOR_H
 #define READ_DHT_SENSOR_H
 
+/*
+  ************************** read_dht_sensor.h *************************
+
+  Description:  
+  ************************************************************/
+  /*-----------------------------------------------------------
+    Version 0.1     11'22     Yasperzee     Imported to platformio
+
+  -----------------------------------------------------------
+*/
+
 #include <Adafruit_Sensor.h>
 #include "DHT.h"
 
@@ -20,21 +31,5 @@ struct Values{
     // constants
     const float ErrorValue = -999.9;
 
-    // Initialize DHT sensor.
-    DHT dht(DHT_PIN, DHT_TYPE);
-
-
-
-
-/*
-  ************************** .h *************************
-
-  Description:  
-  ************************************************************/
-  /*-----------------------------------------------------------
-    Version 0.1     Yasperzee   11'22  
-
-  -----------------------------------------------------------
-*/
 
 #endif // READ_DHT_SENSOR_H
