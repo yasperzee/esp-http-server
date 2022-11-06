@@ -8,11 +8,12 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "/home/mika/working/esp/esp_http_server/include",
-                "/home/mika/working/esp/esp_http_server/src",
+                "/home/mika/working/esp/esp-http-server/include",
+                "/home/mika/working/esp/esp-http-server/src",
                 "/home/mika/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src",
-                "/home/mika/working/esp/esp_http_server/.pio/libdeps/esp01_1m/DHT sensor library",
-                "/home/mika/working/esp/esp_http_server/.pio/libdeps/esp01_1m/Adafruit Unified Sensor",
+                "/home/mika/working/esp/esp-http-server/.pio/libdeps/esp01_1m/ArduinoJson/src",
+                "/home/mika/working/esp/esp-http-server/.pio/libdeps/esp01_1m/DHT sensor library",
+                "/home/mika/working/esp/esp-http-server/.pio/libdeps/esp01_1m/Adafruit Unified Sensor",
                 "/home/mika/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include",
                 "/home/mika/.platformio/packages/framework-arduinoespressif8266/cores/esp8266",
                 "/home/mika/.platformio/packages/toolchain-xtensa/include",
@@ -57,11 +58,12 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/home/mika/working/esp/esp_http_server/include",
-                    "/home/mika/working/esp/esp_http_server/src",
+                    "/home/mika/working/esp/esp-http-server/include",
+                    "/home/mika/working/esp/esp-http-server/src",
                     "/home/mika/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src",
-                    "/home/mika/working/esp/esp_http_server/.pio/libdeps/esp01_1m/DHT sensor library",
-                    "/home/mika/working/esp/esp_http_server/.pio/libdeps/esp01_1m/Adafruit Unified Sensor",
+                    "/home/mika/working/esp/esp-http-server/.pio/libdeps/esp01_1m/ArduinoJson/src",
+                    "/home/mika/working/esp/esp-http-server/.pio/libdeps/esp01_1m/DHT sensor library",
+                    "/home/mika/working/esp/esp-http-server/.pio/libdeps/esp01_1m/Adafruit Unified Sensor",
                     "/home/mika/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include",
                     "/home/mika/.platformio/packages/framework-arduinoespressif8266/cores/esp8266",
                     "/home/mika/.platformio/packages/toolchain-xtensa/include",
