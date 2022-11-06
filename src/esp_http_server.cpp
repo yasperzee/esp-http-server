@@ -52,6 +52,9 @@ Values values;
 // Functions
 String build_json_html(void);
 Values read_dht_sensor(void);
+void handleRoot();
+void handleNotFound();
+
 //String build_pure_html(void);
 
 // Set web server port number to 80
@@ -59,14 +62,6 @@ Values read_dht_sensor(void);
 ESP8266WebServer server(80);  //Define server object
 // Initialize DHT sensor.
 DHT dht(DHT_PIN, DHT_TYPE);
-
-//Handles http request 
-void handleRoot() {
-  
-    String webPage;
-    webPage = build_json_html();
-    server.send(200, "text/html", webPage);
-}
 
 void setup()
     {
@@ -90,11 +85,17 @@ void setup()
     Serial.println("RSSI: %d dBm"), WiFi.RSSI();
     Serial.println("Vcc: %d V"), ESP.getVcc();
      
-    server.on("/", handleRoot);      //Associate handler function to web requests
+    //Associate handler function to web requests
+
+    server.on("/", handleRoot);               // Call the 'handleRoot' function when a client requests URI "/"
+    server.onNotFound(handleNotFound);        // When a client requests an unknown URI (i.e. something other than "/"), call function "handleNotFound"
+
     server.begin();
-    
+
     Serial.println("Node is " + NODEMCU_STR);
     Serial.println("Sensor is " + SENSOR_STR);
+
+
     } // setup
 
 void loop()
@@ -102,6 +103,7 @@ void loop()
     //Handle Client requests
     server.handleClient();
     } // loop
+
 
     String build_json_html(void)
     {
@@ -115,7 +117,6 @@ void loop()
     StaticJsonDocument<500> doc;
     // Create the root object
     JsonObject root = doc.createNestedObject("FullInfo");
-    //webpage  = "{\"products\":";
     root["Temp"] = values.temperature;
     root["Humid"] = values.humidity;
     root["RSSI"] = WiFi.RSSI();
@@ -124,7 +125,6 @@ void loop()
 
     //Store JSON in String variable  
     serializeJson(doc, webpage);
-    //webpage  += "}";
 
     Serial.println("webpage: ");
     Serial.println(webpage);
@@ -154,66 +154,15 @@ void loop()
     return values;
     }
 
-/*
-String build_pure_html(void)
-    {
-    Values values;
-    String webpage;
-
-    webpage  = "<!DOCTYPE html><html>";
-    webpage += "<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
-    webpage += "<link rel=\"icon\" href=\"data:,\">";
-    // CSS to style the on/off buttons
-    // Feel free to change the background-color and font-size attributes to fit your preferences
-    webpage += "<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}";
-    webpage += ".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;";
-    webpage += "text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}";
-    webpage += ".button2 {background-color: #77878A;}</style></head>";
-    // Web Page Heading
-
-    // Display temperature and pressure values
-    if (getValuesState=="off")
-        {
-        webpage += "<p>Node information </p>";
-        webpage += "<p><a href=\"/TH/data\"><button class=\"button\">Get data</button></a></p>"; // Next state
-        webpage += "<info>";
-        webpage +=  "Info: ";
-        webpage +=  NODE_ID_STR;
-        webpage += ": ";
-        webpage +=  NODEMCU_STR;
-        webpage += " / ";
-        webpage +=  SENSOR_STR;
-        webpage += "</info>";
-        }
-    else if (getValuesState=="on")
-        {
-        values = read_dht_sensor();
-        webpage += "<p>Measurements </p>";
-        webpage += "<p><a href=\"/TH/info\"><button class=\"button button2\">Get Node info</button></a></p>"; // Next state
-        // Print temperature and humidity values here
-        webpage += "<data>";
-        webpage += "Temperature: ";
-        webpage += (values.temperature);
-        webpage += " C";
-        webpage += "<br/>";
-        webpage += "Humidity: ";
-        webpage += (values.humidity);
-        webpage += " %";
-        webpage += "</data>";
-        }
-    else
-        {
-        webpage += "<p>Unsupported request </p>";
-        webpage += "<p><a href=\"/TH/info\"><button class=\"button button2\">Get Node info</button></a></p>"; // Next state
-        webpage += "<error>";
-        webpage += "Unknown request. ";
-        webpage += "</error>";
-        }
+void handleRoot() {
+    String temp = build_json_html();
+    server.send(200, "text/plain", temp); 
+    //server.send(200, "text/plain", "Hello world!");   // Send HTTP status 200 (Ok) and send some text to the browser/client
+    Serial.println("HTTP status 200 (Ok)");
     
-    webpage += "</body></html>";
-    // The HTTP response ends with another blank line
-    webpage += "";
-    return (webpage);
-    } // build_pure_html
+}
 
-*/
+void handleNotFound(){
+    server.send(404, "text/plain", "404: Not found"); // Send HTTP status 404 (Not Found) when there's no handler for the URI in the request
+    Serial.println("HTTP status 404 (Not found)");
+}
