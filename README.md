@@ -1,3 +1,3 @@
 esp_http_server platformio (C++)
-Pure html
+html/Json
 supported sensors: DHT11/DHT22
