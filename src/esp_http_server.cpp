@@ -163,7 +163,7 @@ void loop()
 
 void handleRoot() {
     String temp = build_json_html();
-    server.send(200, "text/plain", temp); 
+    server.send(200, "application/json", temp); 
     //server.send(200, "text/plain", "Hello world!");   // Send HTTP status 200 (Ok) and send some text to the browser/client
     Serial.println("HTTP status 200 (Ok)");
     
