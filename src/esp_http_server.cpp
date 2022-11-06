@@ -142,8 +142,15 @@ void loop()
     H = dht.readHumidity();
     // Read temperature as Celsius (the default)
     T = dht.readTemperature();
-    values.humidity = H;
-    values.temperature = T;
+    //values.humidity = H;
+    //values.temperature = T;
+    values.humidity = (int)H;
+    values.temperature = roundf(T * 100) / 100; // 2 decimals 
+    Serial.println("humid: %d "), values.humidity;
+    Serial.println("temp: %d "), values.temperature;
+
+//float nearest = roundf(val * 100) / 100;  /* Result: 37.78 */
+
     // Check if any reads failed and exit early (to try again).
     if (isnan(H) || isnan(T))
         {

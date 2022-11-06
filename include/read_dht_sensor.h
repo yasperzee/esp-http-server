@@ -17,7 +17,7 @@
 
 // values from DHT read_dht_sensor
 struct Values{
-    float temperature;
+   int temperature;
     float humidity;
     };
 
@@ -29,7 +29,7 @@ struct Values{
     #define DHT_PIN 	2 // ESP-01 gpio 2
 
     // constants
-    const float ErrorValue = -999.9;
+    const int ErrorValue = -999;
 
 
 #endif // READ_DHT_SENSOR_H
