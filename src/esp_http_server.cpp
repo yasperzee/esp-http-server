@@ -112,19 +112,37 @@ void loop()
 
     values = read_dht_sensor();
 
+/*DynamicJsonDocument doc(1024);
+
+doc["sensor"] = "gps";
+doc["time"]   = 1351824120;
+doc["data"][0] = 48.756080;
+doc["data"][1] = 2.302038;
+
+serializeJson(doc, Serial);
+*/
+
+
     // Allocate JsonBuffer
     // Use arduinojson.org/assistant to compute the capacity.
-    StaticJsonDocument<500> doc;
+   // StaticJsonDocument<500> doc;
+   
     // Create the root object
-    JsonObject root = doc.createNestedObject("FullInfo");
+   // JsonObject root = doc.createNestedObject("FullInfo");
+    //JsonObject root = doc.createNestedObject();
+    
+    StaticJsonDocument<500> root;
+   // DynamicJsonDocument<500> root;
     root["Temp"] = values.temperature;
     root["Humid"] = values.humidity;
     root["RSSI"] = WiFi.RSSI();
     root["VCC"] = ESP.getVcc();
-    root["INFO"] = "ESP-01s"; 
+    root["INFO"] = "ESP-01s";
+    Serial.println("root: ");
+    //Serial.println(root);
 
     //Store JSON in String variable  
-    serializeJson(doc, webpage);
+    serializeJson(root, webpage);
 
     Serial.println("webpage: ");
     Serial.println(webpage);
