@@ -19,6 +19,8 @@
 
 /*------------------------------------------------------------------------------
   
+    Version 0.4     11'22     Yasperzee     Rest added
+
     Version 0.3     11'22     Yasperzee     Json added
 
     Version 0.2     11'22     Yasperzee     Imported to platformio
@@ -27,39 +29,41 @@
     
     Version 1.1b    4'19      Yasperzee     Something. . .
 
+    // jSon
     // https://tutorial.eyehunts.com/html/display-formatted-json-in-html-example-code/
     // https://arduinojson.org/v6/example/http-server/
     // https://stackoverflow.com/questions/51748948/how-to-give-a-name-to-json-object
     // https://arduinojson.org/v6/api/jsondocument/createnestedobject/
+
+    // Rest
+    https://www.mischianti.org/2020/05/16/how-to-create-a-rest-server-on-esp8266-and-esp32-startup-part-1/
+    https://github.com/sidoh/rich_http_server/blob/master/examples/SimpleRestServer/SimpleRestServer.ino
  
-------------------------------------------------------------------------------*/
+---------------------------------------------------------------------------------*/
 
 // includes
 #include "ssid.h"  // SSID and PASS strings for local network
 #include "setup.h"
 #include "read_dht_sensor.h" 
-
-//#include "esp8266webserver.h"
-#include <ESP8266WebServer.h>   // Include the WebServer library
-
 #include "ArduinoJson.h"
+//#include <RichHttpServer.h> // For Rest
 
 
-// Variable to store the HTTP request
-String header;
 Values values;
 
 // Functions
 String build_json_html(void);
 Values read_dht_sensor(void);
-void handleRoot();
-void handleNotFound();
-
-//String build_pure_html(void);
+void serverRoutingRest();
+void handleNotFoundRest();
+void getNodeData();
+//void handleRootRest();
 
 // Set web server port number to 80
-//WiFiServer server(PORT);
-ESP8266WebServer server(80);  //Define server object
+ESP8266WebServer server(HTTP_PORT);  //Define server object
+// configure the REST port and instatiate the server
+//ESP8266WebServer server(HTTP_REST_PORT);
+
 // Initialize DHT sensor.
 DHT dht(DHT_PIN, DHT_TYPE);
 
@@ -76,7 +80,12 @@ void setup()
         delay(WIFI_RETRY_TIME);
         Serial.print(".");
         }
+        // REST
+      
+      
+
     dht.begin();    
+
     // Print local IP address and start web server
     Serial.println("");
     Serial.println("WiFi connected.");
@@ -84,17 +93,14 @@ void setup()
     Serial.println(WiFi.localIP());
     Serial.println("RSSI: %d dBm"), WiFi.RSSI();
     Serial.println("Vcc: %d V"), ESP.getVcc();
+
+    //Serial.println("Node is " + NODEMCU_STR);
+    //Serial.println("Sensor is " + SENSOR_STR);
      
     //Associate handler function to web requests
-
-    server.on("/", handleRoot);               // Call the 'handleRoot' function when a client requests URI "/"
-    server.onNotFound(handleNotFound);        // When a client requests an unknown URI (i.e. something other than "/"), call function "handleNotFound"
-
+    serverRoutingRest();
+    server.onNotFound(handleNotFoundRest);        // When a Rest client requests an unknown URI (i.e. something other than "/"), call function "handleNotFoundRest"
     server.begin();
-
-    Serial.println("Node is " + NODEMCU_STR);
-    Serial.println("Sensor is " + SENSOR_STR);
-
 
     } // setup
 
@@ -104,33 +110,13 @@ void loop()
     server.handleClient();
     } // loop
 
-
-    String build_json_html(void)
+String build_json_html(void)
     {
 
     String webpage;
 
     values = read_dht_sensor();
 
-/*DynamicJsonDocument doc(1024);
-
-doc["sensor"] = "gps";
-doc["time"]   = 1351824120;
-doc["data"][0] = 48.756080;
-doc["data"][1] = 2.302038;
-
-serializeJson(doc, Serial);
-*/
-
-
-    // Allocate JsonBuffer
-    // Use arduinojson.org/assistant to compute the capacity.
-   // StaticJsonDocument<500> doc;
-   
-    // Create the root object
-   // JsonObject root = doc.createNestedObject("FullInfo");
-    //JsonObject root = doc.createNestedObject();
-    
     StaticJsonDocument<500> root;
    // DynamicJsonDocument<500> root;
     root["Temp"] = values.temperature;
@@ -138,19 +124,48 @@ serializeJson(doc, Serial);
     root["RSSI"] = WiFi.RSSI();
     root["VCC"] = ESP.getVcc();
     root["INFO"] = "ESP-01s";
-    Serial.println("root: ");
-    //Serial.println(root);
+   //Serial.println("root: ");
 
     //Store JSON in String variable  
     serializeJson(root, webpage);
 
-    Serial.println("webpage: ");
-    Serial.println(webpage);
+    //Serial.println("webpage: ");
+    //Serial.println(webpage);
 
     return webpage;
     }
 
- Values read_dht_sensor(void)
+void serverRoutingRest() {
+    server.on("/", HTTP_GET, []() 
+        {
+        server.send(200, F("text/html"), F("Welcome to the REST  IOT Web Server"));
+        server.on(F("/nodeData"), HTTP_GET, getNodeData);
+        //server.on(F("/settings"), HTTP_GET, getSettings); // there can be several "on"
+        });  
+}
+
+void getNodeData() {
+    String temp = build_json_html();
+    server.send(200, "text/json", temp);
+}
+
+// Manage not found URL ( Rest)
+void handleNotFoundRest() {
+  String message = "File Not Found\n\n";
+  message += "URI: ";
+  message += server.uri();
+  message += "\nMethod: ";
+  message += (server.method() == HTTP_GET) ? "GET" : "POST";
+  message += "\nArguments: ";
+  message += server.args();
+  message += "\n";
+  for (uint8_t i = 0; i < server.args(); i++) {
+    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
+  }
+  server.send(404, "text/plain", message);
+}
+ 
+Values read_dht_sensor(void)
     {
     float T,H;
     Values values;
@@ -164,10 +179,8 @@ serializeJson(doc, Serial);
     //values.temperature = T;
     values.humidity = (int)H;
     values.temperature = roundf(T * 100) / 100; // 2 decimals 
-    Serial.println("humid: %d "), values.humidity;
-    Serial.println("temp: %d "), values.temperature;
-
-//float nearest = roundf(val * 100) / 100;  /* Result: 37.78 */
+    //Serial.println("humid: %d "), values.humidity;
+    //Serial.println("temp: %d "), values.temperature;
 
     // Check if any reads failed and exit early (to try again).
     if (isnan(H) || isnan(T))
@@ -179,15 +192,12 @@ serializeJson(doc, Serial);
     return values;
     }
 
-void handleRoot() {
-    String temp = build_json_html();
-    server.send(200, "application/json", temp); 
-    //server.send(200, "text/plain", "Hello world!");   // Send HTTP status 200 (Ok) and send some text to the browser/client
-    Serial.println("HTTP status 200 (Ok)");
-    
-}
 
-void handleNotFound(){
-    server.send(404, "text/plain", "404: Not found"); // Send HTTP status 404 (Not Found) when there's no handler for the URI in the request
-    Serial.println("HTTP status 404 (Not found)");
+/*
+void handleRootRest() {
+    //String temp = build_json_html();
+    //server.send(200, "text/json", temp);
+    server.send(200, F("text/json"), F("Welcome to the REST Web Server, handleRootRest"));
+    //getNodeData();
 }
+*/

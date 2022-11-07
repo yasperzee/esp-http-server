@@ -14,6 +14,7 @@
 */
 #include <Arduino.h>
 #include "ESP8266WiFi.h"
+#include <ESP8266WebServer.h>   // Include the WebServer library
 
 //****** Configurations ********************************************************
 //Select string for Node, used for information and debug
@@ -28,7 +29,10 @@ String NODE_ID_STR  =  "Node-00001";
 #define BAUDRATE        115200
 #define WIFI_RETRY_TIME 1000 //ms
 
+#define HTTP_PORT 80
+#define HTTP_REST_PORT 8080
+
 // variables
-String getValuesState   = "off";
+//String getValuesState   = "off";
 
 #endif //SETUP_H
