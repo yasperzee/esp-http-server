@@ -34,6 +34,9 @@
     // ESP
     // https://arduino-esp8266.readthedocs.io/en/latest/libraries.html
 
+    // WiFi
+    // https://www.arduino.cc/reference/en/libraries/wifi/
+
     // jSon
     // https://tutorial.eyehunts.com/html/display-formatted-json-in-html-example-code/
     // https://arduinojson.org/v6/example/http-server/
@@ -51,9 +54,7 @@
 #include "ssid.h"  // SSID and PASS strings for local network
 #include "setup.h"
 #include "read_dht_sensor.h" 
-//#include <RichHttpServer.h> // For Rest
-
-//Values values;
+#include <aREST.h> // For Rest
 
 // Functions
 String build_json_getdata_html(void);
@@ -65,8 +66,6 @@ void getNodeInfo();
 
 // Set web server port number
 ESP8266WebServer server(HTTP_PORT);  //Define server object
-// configure the REST port and instatiate the server
-//ESP8266WebServer server(HTTP_REST_PORT);
 
 void setup()
     {
@@ -81,30 +80,22 @@ void setup()
         delay(WIFI_RETRY_TIME);
         Serial.print(".");
         }  
-
     Serial.println("");
     Serial.println("WiFi connected.");
-
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
-
     Serial.print("RSSI: "), WiFi.RSSI();
     Serial.println(WiFi.RSSI());
-
+    Serial.print("MAC: ");  
+    Serial.println(WiFi.macAddress()); 
     Serial.print("Vcc: ");  
     Serial.println(ESP.getVcc());
-    
     Serial.print("Core version: "); 
     Serial.println(ESP.getCoreVersion()); //returns a String containing the core version.
-    
     Serial.print("Chip ID: "); 
     Serial.println(ESP.getChipId()); //returns the ESP8266 chip ID as a 32-bit intege
-    
-
     Serial.print("SDK version: ");
     Serial.println(ESP.getSdkVersion());ESP.getSdkVersion(); //returns the SDK version as a char.
-
-
     //Serial.println("Node is " + NODEMCU_STR);
     //Serial.println("Sensor is " + SENSOR_STR);
      
@@ -130,7 +121,6 @@ void serverRoutingRest() {
        // server.on(F("/nodeSetting"), HTTP_GET, getNodeSettings); // there can be several "on"
         });  
 }
-
 
 void getNodeData() {
     String temp = build_json_getdata_html();
@@ -192,14 +182,6 @@ Values read_dht_sensor(void)
     }
 */
 
-/*
-void handleRootRest() {
-    //String temp = build_json_html();
-    //server.send(200, "text/json", temp);
-    server.send(200, F("text/json"), F("Welcome to the REST Web Server, handleRootRest"));
-    //getNodeData();
-}
-*/
 /* Moved to build_json_docs.cpp
 String build_json_getdata_html(void)
     {

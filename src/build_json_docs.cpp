@@ -49,6 +49,7 @@ String build_json_getinfo_html(void)
     //root["Temp"] = values.temperature;
     //root["Humid"] = values.humidity;
     root["RSSI"] = WiFi.RSSI();
+    root["MAC"] = WiFi.macAddress();
     root["VCC"] = ESP.getVcc();
     root["CHIPID"] = ESP.getChipId();
     root["NODETYPE"] = "ESP-01s";
