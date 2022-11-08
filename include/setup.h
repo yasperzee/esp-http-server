@@ -25,14 +25,18 @@ String NODE_ID_STR  =  "Node-00001";
 // *****************************************************************************
 
 // defines
-#define PORT            80
+//#define PORT            80
 #define BAUDRATE        115200
 #define WIFI_RETRY_TIME 1000 //ms
 
 #define HTTP_PORT 80
 #define HTTP_REST_PORT 8080
 
-// variables
-//String getValuesState   = "off";
+/*
+ESP.getChipId() returns the ESP8266 chip ID as a 32-bit integer.
+ESP.getCoreVersion() returns a String containing the core version.
+ESP.getSdkVersion() returns the SDK version as a char.
+*/
+
 
 #endif //SETUP_H
