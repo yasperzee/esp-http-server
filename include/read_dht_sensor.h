@@ -26,7 +26,7 @@
 // values from DHT read_dht_sensor
 struct Values{
    int temperature;
-   float humidity;
+   int humidity;
    };
 
 Values read_dht_sensor(void);
