@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-build_pure_html
 read_dht_sensor
-=======
-ArduinoJson
->>>>>>> Last-Arduino-IDE-version
 adafruit/DHT sensor library@^1.4.4
+ArduinoJson
