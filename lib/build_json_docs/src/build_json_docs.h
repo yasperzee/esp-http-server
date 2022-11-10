@@ -14,7 +14,11 @@
 ------------------------------------------------------------------------------*/
 #include <Arduino.h>
 #include "ArduinoJson.h"
-#include <read_dht_sensor.h>
+#include <read_sensors.h>
 #include "ESP8266WiFi.h"
+#include "setup.h"
+
+String build_json_getdata_html(void);
+String build_json_getinfo_html(void);
 
 #endif // BUILD_JSON_DOCS_H

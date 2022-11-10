@@ -3,15 +3,7 @@ String build_pure_html(void)
     Values values;
     String webpage;
 
-    webpage  = "<!DOCTYPE html><html>";
-    webpage += "<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
-    webpage += "<link rel=\"icon\" href=\"data:,\">";
-    // CSS to style the on/off buttons
-    // Feel free to change the background-color and font-size attributes to fit your preferences
-    webpage += "<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}";
-    webpage += ".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;";
-    webpage += "text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}";
-    webpage += ".button2 {background-color: #77878A;}</style></head>";
+   
     // Web Page Heading
 
     // Display temperature and pressure values

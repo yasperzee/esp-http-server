@@ -14,16 +14,16 @@
 */
 #include <Arduino.h>
 #include "ESP8266WiFi.h"
-
 #include <ESP8266WebServer.h>   // Include the WebServer library
 
 //****** Configurations ********************************************************
-//Select string for Node, used for information and debug
-String NODEMCU_STR  =  "ESP-01";
-// Increment number for each node
-String NODE_ID_STR  =  "Node-00001";
 
-// *****************************************************************************
+// Increment number for each node
+//#define NODE_ID_STR "Node_00001"  // use ESP.getChipId(); 
+#define APP_SW_VERSION "zee_0.0.1"
+#define SENSOR_STR "DHT11"
+#define NODEMCU_STR "ESP-01s"
+
 
 // defines
 #define PORT            80
@@ -31,18 +31,10 @@ String NODE_ID_STR  =  "Node-00001";
 #define WIFI_RETRY_TIME 1000 //ms
 
 // variables
-String getValuesState   = "off";
-//#define PORT            80
 #define BAUDRATE        115200
 #define WIFI_RETRY_TIME 1000 //ms
 
 #define HTTP_PORT 80
 #define HTTP_REST_PORT 8080
-
-/*
-ESP.getChipId() returns the ESP8266 chip ID as a 32-bit integer.
-ESP.getCoreVersion() returns a String containing the core version.
-ESP.getSdkVersion() returns the SDK version as a char.
-*/
 
 #endif //SETUP_H

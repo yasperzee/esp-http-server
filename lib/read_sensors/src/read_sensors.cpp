@@ -11,7 +11,9 @@
 
 #TODO:
 ------------------------------------------------------------------------------*/
-#include <read_dht_sensor.h>
+#include <read_sensors.h>
+
+
 
 DHT dht(DHT_PIN, DHT_TYPE);
 
@@ -39,6 +41,27 @@ Values read_dht_sensor(void)
         values.temperature = ERROR_VALUE;
         values.humidity = ERROR_VALUE;
       	}
+
+        int rpm = read_rpm();
+        values.rpm = rpm;
+
     return values;
     }
 
+    int read_rpm(void)
+    {
+    int rpm;
+    
+    rpm = 2300;
+    
+    Serial.print("RPM: ");
+    Serial.println(rpm);
+
+    // Check if any reads failed and exit early (to try again).
+    if (true)
+    {
+        rpm = ERROR_VALUE;
+        Serial.println(F("Failed to read RPM !"));
+        return rpm;
+        }
+    }

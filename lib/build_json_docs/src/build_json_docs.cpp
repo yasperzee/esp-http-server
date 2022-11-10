@@ -22,11 +22,8 @@ String build_json_getdata_html(void)
    // DynamicJsonDocument<500> root;
     root["Temp"] = values.temperature;
     root["Humid"] = values.humidity;
-    root["RPM"] = "n/a";
-    //root["RSSI"] = WiFi.RSSI();
-    //root["VCC"] = ESP.getVcc();
-    //root["INFO"] = "ESP-01s";
-
+    root["RPM"] = values.rpm;
+ 
     //Store JSON in String variable  
     serializeJson(root, webpage);
 
@@ -43,16 +40,20 @@ String build_json_getinfo_html(void)
     Values values;
 
     values = read_dht_sensor();
+    //Values = read_rpm();
+
 
     StaticJsonDocument<500> root;
    // DynamicJsonDocument<500> root;
-    //root["Temp"] = values.temperature;
-    //root["Humid"] = values.humidity;
     root["RSSI"] = WiFi.RSSI();
+    root["NODE_IP"] = WiFi.localIP();
     root["MAC"] = WiFi.macAddress();
     root["VCC"] = ESP.getVcc();
     root["CHIPID"] = ESP.getChipId();
-    root["NODETYPE"] = "ESP-01s";
+    root["CORE_VERSION"] = ESP.getCoreVersion();
+    root["SDK_VERSION"] = ESP.getSdkVersion();
+    root["APP_SW"] = APP_SW_VERSION;
+    root["NODETYPE"] = NODEMCU_STR;
 
     //Store JSON in String variable  
     serializeJson(root, webpage);

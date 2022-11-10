@@ -19,6 +19,8 @@
 
 /*------------------------------------------------------------------------------
     
+    Version 0.6     11'22     Yasperzee     
+    
     Version 0.5     11'22     Yasperzee     /nodeData  and /nodeInfo separated
 
     Version 0.4     11'22     Yasperzee     Rest added
@@ -52,19 +54,21 @@
 ---------------------------------------------------------------------------------*/
 
 // includes
-#include "ArduinoJson.h"
+//#include "ArduinoJson.h"
 #include "ssid.h"  // SSID and PASS strings for local network
 #include "setup.h"
-#include "read_dht_sensor.h" 
+#include "read_sensors.h" 
+#include "build_json_docs.h"
+//#include "rest_callbacks.h"
+#include "build_light_html.h"
 
 // Functions
-String build_json_getdata_html(void);
-String build_json_getinfo_html(void);
+void printInfo();
+void handle_web_client();
 void serverRoutingRest();
 void handleNotFoundRest();
 void getNodeData();
 void getNodeInfo();
-void printInfo();
 
 // Set web server port number
 ESP8266WebServer server(HTTP_PORT);  //Define server object
@@ -83,23 +87,33 @@ void setup()
         Serial.print(".");
         }  
     printInfo();
-  
+    
     //Associate handler function to web requests
     serverRoutingRest();
+    server.on(F("/nodeData"), HTTP_GET, getNodeData);
+    server.on(F("/nodeInfo"), HTTP_GET, getNodeInfo); 
     server.onNotFound(handleNotFoundRest);        // When a Rest client requests an unknown URI (i.e. something other than "/"), call function "handleNotFoundRest"
     server.begin();
-    }
+    } // setup
 
 void loop()
     {
     //Handle Client requests
-    server.handleClient();
+    handle_web_client();
     } // loop
 
+
+void handle_web_client(void)
+{
+  server.handleClient();
+}
+
+/**/
 void getNodeData() {
     String temp = build_json_getdata_html();
     server.send(200, "text/json", temp);
 }
+/**/
 
 void getNodeInfo() {
     String temp = build_json_getinfo_html();
@@ -108,7 +122,7 @@ void getNodeInfo() {
 
 // Manage not found URL ( Rest)
 void handleNotFoundRest() {
-  String message = "File Not Found\n\n";
+  String message = "File Not Found\n";
   message += "URI: ";
   message += server.uri();
   message += "\nMethod: ";
@@ -125,16 +139,16 @@ void handleNotFoundRest() {
 void serverRoutingRest() {
     server.on("/", HTTP_GET, []() 
         {
-        server.send(200, F("text/html"), F("Welcome to the REST  IOT Web Server"));
-        server.on(F("/nodeData"), HTTP_GET, getNodeData);
-        server.on(F("/nodeInfo"), HTTP_GET, getNodeInfo); // there can be several "on"
-       // server.on(F("/nodeSetting"), HTTP_GET, getNodeSettings); // there can be several "on"
+        // Send webpage
+        String webpage;
+        webpage = build_light_html();
+        server.send(200, ("text/html"), (webpage));
         });  
 }
 
     void printInfo(void)
-        {
-    Serial.println("");
+    {
+      Serial.println("");
       Serial.println("WiFi connected.");
       Serial.print("IP address: ");
       Serial.println(WiFi.localIP());
@@ -150,6 +164,8 @@ void serverRoutingRest() {
       Serial.println(ESP.getChipId()); //returns the ESP8266 chip ID as a 32-bit intege
       Serial.print("SDK version: ");
       Serial.println(ESP.getSdkVersion());ESP.getSdkVersion(); //returns the SDK version as a char.
-      //Serial.println("Node is " + NODEMCU_STR);
-      //Serial.println("Sensor is " + SENSOR_STR);
+      Serial.print("Node is ");
+      Serial.println(NODEMCU_STR);
+      Serial.print("Sensor is ");
+      Serial.println(SENSOR_STR);
     }
