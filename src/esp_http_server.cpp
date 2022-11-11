@@ -19,7 +19,7 @@
 
 /*------------------------------------------------------------------------------
     
-    Version 0.6     11'22     Yasperzee     
+    Version 0.6     11'22     Yasperzee     Initial RPM meter support added
     
     Version 0.5     11'22     Yasperzee     /nodeData  and /nodeInfo separated
 
@@ -51,6 +51,8 @@
     // https://www.arduino.cc/reference/en/libraries/arest/
     // https://github.com/brunoluiz/arduino-restserver
  
+    // RPM
+    // https://www.circuitschools.com/diy-tachometer-using-arduino-esp8266-esp32-to-measure-accurate-rpm-with-ir-sensor/
 ---------------------------------------------------------------------------------*/
 
 // includes
@@ -69,9 +71,22 @@ void serverRoutingRest();
 void handleNotFoundRest();
 void getNodeData();
 void getNodeInfo();
+void get_rpm();
 
 // Set web server port number
 ESP8266WebServer server(HTTP_PORT);  //Define server object
+
+// RPM stuff
+float value=0;
+float rev=0;
+int   rpm;
+int   oldtime=0;
+int   newtime;
+
+void isr() //interrupt service routine
+{
+rev++;
+}
 
 void setup()
     {
@@ -87,6 +102,9 @@ void setup()
         Serial.print(".");
         }  
     printInfo();
+
+    // RPM stuff
+    attachInterrupt(digitalPinToInterrupt(2),isr,RISING); //attaching the interrupt
     
     //Associate handler function to web requests
     serverRoutingRest();
@@ -94,30 +112,51 @@ void setup()
     server.on(F("/nodeInfo"), HTTP_GET, getNodeInfo); 
     server.onNotFound(handleNotFoundRest);        // When a Rest client requests an unknown URI (i.e. something other than "/"), call function "handleNotFoundRest"
     server.begin();
+
     } // setup
+
 
 void loop()
     {
+    get_rpm();
+
     //Handle Client requests
     handle_web_client();
     } // loop
 
 
+void get_rpm()
+  {
+  delay(1000);
+  detachInterrupt(0); //detaches the interrupt
+  newtime=millis()-oldtime; //finds the time 
+  int wings= 1; // no of wings of rotating object, for disc object use 1 with white tape on one side
+  int RPMnew = rev/wings; 
+  rpm=(RPMnew/newtime)*60000; //calculates rpm
+  oldtime=millis(); //saves the current time
+  rev=0;
+
+  Serial.print("___TACHOMETER___");
+  Serial.print( rpm);
+  Serial.print(" RPM");
+  Serial.print(" ");
+
+  attachInterrupt(digitalPinToInterrupt(2),isr,RISING);
+}
+
 void handle_web_client(void)
-{
+  {
   server.handleClient();
 }
 
-/**/
 void getNodeData() {
-    String temp = build_json_getdata_html();
-    server.send(200, "text/json", temp);
+  String temp = build_json_getdata_html();
+  server.send(200, "text/json", temp);
 }
-/**/
 
 void getNodeInfo() {
-    String temp = build_json_getinfo_html();
-    server.send(200, "text/json", temp);
+  String temp = build_json_getinfo_html();
+  server.send(200, "text/json", temp);
 }
 
 // Manage not found URL ( Rest)
@@ -137,35 +176,35 @@ void handleNotFoundRest() {
 }
 
 void serverRoutingRest() {
-    server.on("/", HTTP_GET, []() 
-        {
-        // Send webpage
-        String webpage;
-        webpage = build_light_html();
-        server.send(200, ("text/html"), (webpage));
-        });  
-}
+  server.on("/", HTTP_GET, []() 
+  {
+    // Send webpage
+    String webpage;
+    webpage = build_light_html();
+    server.send(200, ("text/html"), (webpage));
+    });  
+  }
 
-    void printInfo(void)
+void printInfo(void)
     {
-      Serial.println("");
-      Serial.println("WiFi connected.");
-      Serial.print("IP address: ");
-      Serial.println(WiFi.localIP());
-      Serial.print("RSSI: "), WiFi.RSSI();
-      Serial.println(WiFi.RSSI());
-      Serial.print("MAC: ");  
-      Serial.println(WiFi.macAddress()); 
-      Serial.print("Vcc: ");  
-      Serial.println(ESP.getVcc());
-      Serial.print("Core version: "); 
-      Serial.println(ESP.getCoreVersion()); //returns a String containing the core version.
-      Serial.print("Chip ID: "); 
-      Serial.println(ESP.getChipId()); //returns the ESP8266 chip ID as a 32-bit intege
-      Serial.print("SDK version: ");
-      Serial.println(ESP.getSdkVersion());ESP.getSdkVersion(); //returns the SDK version as a char.
-      Serial.print("Node is ");
-      Serial.println(NODEMCU_STR);
-      Serial.print("Sensor is ");
-      Serial.println(SENSOR_STR);
+    Serial.println("");
+    Serial.println("WiFi connected.");
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+    Serial.print("RSSI: "), WiFi.RSSI();
+    Serial.println(WiFi.RSSI());
+    Serial.print("MAC: ");  
+    Serial.println(WiFi.macAddress()); 
+    Serial.print("Vcc: ");  
+    Serial.println(ESP.getVcc());
+    Serial.print("Core version: "); 
+    Serial.println(ESP.getCoreVersion()); //returns a String containing the core version.
+    Serial.print("Chip ID: "); 
+    Serial.println(ESP.getChipId()); //returns the ESP8266 chip ID as a 32-bit intege
+    Serial.print("SDK version: ");
+    Serial.println(ESP.getSdkVersion());ESP.getSdkVersion(); //returns the SDK version as a char.
+    Serial.print("Node is ");
+    Serial.println(NODEMCU_STR);
+    Serial.print("Sensor is ");
+    Serial.println(SENSOR_STR);
     }
