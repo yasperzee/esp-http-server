@@ -19,7 +19,7 @@
 
 /*------------------------------------------------------------------------------
     
-    Version 0.6     11'22     Yasperzee     Initial RPM meter support added
+    Version 0.6     11'22     Yasperzee     RPM meter support added
     
     Version 0.5     11'22     Yasperzee     /nodeData  and /nodeInfo separated
 
@@ -71,25 +71,22 @@ void serverRoutingRest();
 void handleNotFoundRest();
 void getNodeData();
 void getNodeInfo();
-void get_rpm();
+float get_rpm();
 
 // Set web server port number
 ESP8266WebServer server(HTTP_PORT);  //Define server object
 
-// RPM stuff
-float value=0;
-float rev=0;
-int   rpm;
-int   oldtime=0;
-int   newtime;
-
-void isr() //interrupt service routine
-{
-rev++;
-}
+// IR Infrared sensor
+  //pinMode(RPM_PIN, INPUT_PULLUP); 
+  //pinMode(RPM_PIN, INPUT); 
 
 void setup()
     {
+    // IR Infrared sensor
+    pinMode(RPM_PIN, INPUT_PULLUP); 
+    //pinMode(RPM_PIN, INPUT); 
+    attachInterrupt(digitalPinToInterrupt(RPM_PIN), isr, FALLING);
+
     Serial.begin(BAUDRATE);
     // Connect to Wi-Fi network with SSID and password
     Serial.print("Connecting to ");
@@ -101,58 +98,38 @@ void setup()
         delay(WIFI_RETRY_TIME);
         Serial.print(".");
         }  
-    printInfo();
 
-    // RPM stuff
-    attachInterrupt(digitalPinToInterrupt(2),isr,RISING); //attaching the interrupt
-    
+    printInfo();
+  
     //Associate handler function to web requests
     serverRoutingRest();
     server.on(F("/nodeData"), HTTP_GET, getNodeData);
     server.on(F("/nodeInfo"), HTTP_GET, getNodeInfo); 
     server.onNotFound(handleNotFoundRest);        // When a Rest client requests an unknown URI (i.e. something other than "/"), call function "handleNotFoundRest"
     server.begin();
-
+   
     } // setup
 
-
 void loop()
-    {
-    get_rpm();
+    {    
+    //get_rpm();
+
+    //read_dht_sensor();
 
     //Handle Client requests
     handle_web_client();
+
     } // loop
-
-
-void get_rpm()
-  {
-  delay(1000);
-  detachInterrupt(0); //detaches the interrupt
-  newtime=millis()-oldtime; //finds the time 
-  int wings= 1; // no of wings of rotating object, for disc object use 1 with white tape on one side
-  int RPMnew = rev/wings; 
-  rpm=(RPMnew/newtime)*60000; //calculates rpm
-  oldtime=millis(); //saves the current time
-  rev=0;
-
-  Serial.print("___TACHOMETER___");
-  Serial.print( rpm);
-  Serial.print(" RPM");
-  Serial.print(" ");
-
-  attachInterrupt(digitalPinToInterrupt(2),isr,RISING);
-}
 
 void handle_web_client(void)
   {
   server.handleClient();
-}
+  }
 
 void getNodeData() {
   String temp = build_json_getdata_html();
   server.send(200, "text/json", temp);
-}
+  }
 
 void getNodeInfo() {
   String temp = build_json_getinfo_html();
@@ -173,7 +150,7 @@ void handleNotFoundRest() {
     message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
   }
   server.send(404, "text/plain", message);
-}
+  }
 
 void serverRoutingRest() {
   server.on("/", HTTP_GET, []() 

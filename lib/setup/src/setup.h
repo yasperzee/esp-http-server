@@ -20,10 +20,8 @@
 
 // Increment number for each node
 //#define NODE_ID_STR "Node_00001"  // use ESP.getChipId(); 
-#define APP_SW_VERSION "zee_0.0.1"
-#define SENSOR_STR "DHT11"
+#define APP_SW_VERSION "zee_esp_http_0.1.00_dev"
 #define NODEMCU_STR "ESP-01s"
-
 
 // defines
 #define PORT            80
