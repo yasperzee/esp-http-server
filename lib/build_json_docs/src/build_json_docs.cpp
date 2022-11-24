@@ -11,13 +11,13 @@
 
 #include "build_json_docs.h"
 
-String build_json_getdata_html(void)
-    {
+String build_json_getdata_html(void) {
     Values values;
     String webpage;
 
     //values= read_dht_sensor();
-    float rpm= get_rpm();
+    float r= get_rpm();
+    float rpm = roundf(r * 100) / 100; // 2 decimals 
 
     StaticJsonDocument<500> root;
     // DynamicJsonDocument<500> root;
@@ -38,13 +38,10 @@ String build_json_getdata_html(void)
     return webpage;
     }
 
-String build_json_getinfo_html(void)
-    {
-
+String build_json_getinfo_html(void) {
     String webpage;
-   // Values values;
-
-//    values = read_dht_sensor();
+    // Values values;
+    //values = read_dht_sensor();
     //Values = read_rpm();
     
     StaticJsonDocument<500> root;
@@ -59,12 +56,44 @@ String build_json_getinfo_html(void)
     root["APP_SW"] = APP_SW_VERSION;
     //root["NODETYPE"] = NODEMCU_STR;
     
-
     //Store JSON in String variable  
     serializeJson(root, webpage);
 
     //Serial.println("webpage: ");
     //Serial.println(webpage);
+    return webpage;
+    }
 
+String build_json_getDebug_html(void) {
+    String webpage;
+    
+    StaticJsonDocument<500> root;
+   // DynamicJsonDocument<500> root;
+    root["Reboots"] = 5; // save to EEPROM
+    
+    //Store JSON in String variable  
+    serializeJson(root, webpage);
+
+    //Serial.println("webpage: ");
+    //Serial.println(webpage);
+    return webpage;
+    }
+
+    String build_json_getSettings_html(void) {
+    String webpage;
+    
+    StaticJsonDocument<500> root;
+   // DynamicJsonDocument<500> root;
+    root["Settings"] = "n/a yet";
+
+    // things to updated wia PUT, saved to EEPROM
+    // ssid, password
+    // SENSOR_STR
+    
+    //Store JSON in String variable  
+    serializeJson(root, webpage);
+
+    //Serial.println("webpage: ");
+    //Serial.println(webpage);
     return webpage;
     }

@@ -3,7 +3,6 @@
 
 
 /*************************build_json_docs.h************************************
-
     Description:    
 *******************************************************************************/
 
@@ -20,5 +19,7 @@
 
 String build_json_getdata_html(void);
 String build_json_getinfo_html(void);
+String build_json_getDebug_html(void);
+String build_json_getSettings_html(void);
 
 #endif // BUILD_JSON_DOCS_H
