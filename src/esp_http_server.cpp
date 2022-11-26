@@ -1,69 +1,54 @@
-/**************************** esp_http_server.cpp ***********************
+/**************************** esp_http_server.cpp ******************************
 
-  Description:  Read temperature & humidity from DHT11 & DHT22 sensor.
-                ESP-01 acts as webserver.
-                Builds webpage with temperature and humidity values.
-                Builds webpage with some information about NodeMCU and Sensor.
+Description:  Read RPM
 
-  Components:   - ESP-01 esp8266 NodeMcu
-                - DHT11 or DHT22 temperature and humidity sensor
+Components:   - ESP-01 esp8266 NodeMcu
+              - Optic RPM sensor
 
-  Librarys:     - uhttps://github.com/esp8266/Arduino
-                - https://github.com/adafruit/DHT-sensor-library
-                - https://github.com/adafruit/Adafruit_Sensor
+Librarys:     -
 
-  IDE & tools:  - VSCode, Platformio
-
-  References:   -
-*******************************************************************************/
-
-/*------------------------------------------------------------------------------
-    
-    Version 0.7     11'22     Yasperzee     /nodeDebug added
-    
-    Version 0.6     11'22     Yasperzee     RPM meter support added
-    
-    Version 0.5     11'22     Yasperzee     /nodeData  and /nodeInfo separated
-
-    Version 0.4     11'22     Yasperzee     Rest added
-
-    Version 0.3     11'22     Yasperzee     Json added
-
-    Version 0.2     11'22     Yasperzee     Imported to platformio
-  
-    Version 0.1     11'22     Yasperzee     Baseline, pure HTML
-    
-    Version 1.1b    4'19      Yasperzee     Something. . .
-
-    // ESP
+References:   
+  // ESP
     // https://arduino-esp8266.readthedocs.io/en/latest/libraries.html
 
-    // WiFi
+  // WiFi
     // https://www.arduino.cc/reference/en/libraries/wifi/
 
-    // jSon
+  // jSon
     // https://tutorial.eyehunts.com/html/display-formatted-json-in-html-example-code/
     // https://arduinojson.org/v6/example/http-server/
     // https://stackoverflow.com/questions/51748948/how-to-give-a-name-to-json-object
     // https://arduinojson.org/v6/api/jsondocument/createnestedobject/
 
-    // Rest
+  // Rest
     // https://www.mischianti.org/2020/05/16/how-to-create-a-rest-server-on-esp8266-and-esp32-startup-part-1/
     // https://github.com/sidoh/rich_http_server/blob/master/examples/SimpleRestServer/SimpleRestServer.ino
     // https://www.arduino.cc/reference/en/libraries/arest/
     // https://github.com/brunoluiz/arduino-restserver
  
-    // RPM
+  // RPM
     // https://www.circuitschools.com/diy-tachometer-using-arduino-esp8266-esp32-to-measure-accurate-rpm-with-ir-sensor/
+*******************************************************************************/
+
+/*------------------------------------------------------------------------------
+    
+  Version 0.8     11'22     Yasperzee     Weather stuff removed
+  Version 0.7     11'22     Yasperzee     /nodeDebug added  
+  Version 0.6     11'22     Yasperzee     RPM meter support added
+  Version 0.5     11'22     Yasperzee     /nodeData  and /nodeInfo separated
+  Version 0.4     11'22     Yasperzee     Rest added
+  Version 0.3     11'22     Yasperzee     Json added
+  Version 0.2     11'22     Yasperzee     Imported to platformio
+  Version 0.1     11'22     Yasperzee     Baseline, pure HTML
+  Version 1.1b    4'19      Yasperzee     Something. . .
+    
 --------------------------------------------------------------------------------------------*/
 
 // includes
-//#include "ArduinoJson.h"
 #include "ssid.h"  // SSID and PASS strings for local network
 #include "setup.h"
 #include "read_sensors.h" 
 #include "build_json_docs.h"
-//#include "rest_callbacks.h"
 #include "build_light_html.h"
 
 // Functions
@@ -76,19 +61,16 @@ void getNodeInfo();
 float get_rpm();
 void getNodeDebug();
 void getNodeSettings();
+void putNodeSettings();
 
 u32 reboots=  0; // save to EEPROM
 
-// Set web server port number
+// Set web (REST) server port number
 ESP8266WebServer server(HTTP_PORT);  //Define server object
-
-// IR Infrared sensor
-  //pinMode(RPM_PIN, INPUT_PULLUP); 
-  //pinMode(RPM_PIN, INPUT); 
 
 void setup() {
   
-  reboots++; // to EEPROM
+  reboots++; // to EEPROM for debugging
 
   Serial.begin(BAUDRATE);
   // Connect to Wi-Fi network with SSID and password
@@ -111,7 +93,7 @@ void setup() {
   server.on(F("/nodeInfo"), HTTP_GET, getNodeInfo); 
   server.on(F("/nodeDebug"), HTTP_GET, getNodeDebug); 
   server.on(F("/nodeSettings"), HTTP_GET, getNodeSettings); 
-  //server.on(F("/nodeSetup"), HTTP_PUT, putNodeSetup); 
+  server.on(F("/nodeSetup"), HTTP_PUT, putNodeSettings); 
   server.onNotFound(handleNotFoundRest);        // When a Rest client requests an unknown URI (i.e. something other than "/"), call function "handleNotFoundRest"
   server.begin(); 
 
@@ -121,9 +103,7 @@ void setup() {
   } // setup
 
 void loop() {    
-  //get_rpm();
-  //read_dht_sensor();
-
+ 
   //Handle Client requests
   handle_web_client();
   } // loop
@@ -149,6 +129,11 @@ void getNodeDebug() {
   
 void getNodeSettings() {
   String temp = build_json_getSettings_html();
+  server.send(200, "text/json", temp);
+  }
+
+  void putNodeSettings() {
+  String temp = build_json_putSettings_html();
   server.send(200, "text/json", temp);
   }
   
