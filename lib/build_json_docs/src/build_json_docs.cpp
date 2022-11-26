@@ -1,6 +1,7 @@
 /*************************build_json_docs.cpp**********************************
 
-    Description:    
+    Description:     Build responses
+
 *******************************************************************************/
 
 /* ------------ Version history ------------------------------------------------
@@ -12,7 +13,7 @@
 #include "build_json_docs.h"
 
 String build_json_getdata_html(void) {
-    Values values;
+    //Values values;
     String webpage;
 
     //values= read_dht_sensor();
@@ -21,19 +22,11 @@ String build_json_getdata_html(void) {
 
     StaticJsonDocument<500> root;
     // DynamicJsonDocument<500> root;
-
-    //root["Temp"] = values.temperature;
-    //root["Humid"] = values.humidity;
-    //root["PIN_STATE"] = state;
     //root["RPM"] = values.rpm;
     root["RPM"] = rpm;
-    //root["DebugREV"] = rpm;
-    
+   
     //Store JSON in String variable  
     serializeJson(root, webpage);
-
-    //Serial.println("webpage: ");
-    //Serial.println(webpage);
 
     return webpage;
     }
@@ -41,8 +34,6 @@ String build_json_getdata_html(void) {
 String build_json_getinfo_html(void) {
     String webpage;
     // Values values;
-    //values = read_dht_sensor();
-    //Values = read_rpm();
     
     StaticJsonDocument<500> root;
    // DynamicJsonDocument<500> root;
@@ -59,8 +50,6 @@ String build_json_getinfo_html(void) {
     //Store JSON in String variable  
     serializeJson(root, webpage);
 
-    //Serial.println("webpage: ");
-    //Serial.println(webpage);
     return webpage;
     }
 
@@ -69,22 +58,20 @@ String build_json_getDebug_html(void) {
     
     StaticJsonDocument<500> root;
    // DynamicJsonDocument<500> root;
-    root["Reboots"] = 5; // save to EEPROM
+    root["Reboots"] = 5; // should be saved to EEPROM
     
     //Store JSON in String variable  
     serializeJson(root, webpage);
 
-    //Serial.println("webpage: ");
-    //Serial.println(webpage);
     return webpage;
     }
 
-    String build_json_getSettings_html(void) {
+String build_json_getSettings_html(void) {
     String webpage;
     
     StaticJsonDocument<500> root;
    // DynamicJsonDocument<500> root;
-    root["Settings"] = "n/a yet";
+    root["Settings"] = "GET n/a yet";
 
     // things to updated wia PUT, saved to EEPROM
     // ssid, password
@@ -93,7 +80,22 @@ String build_json_getDebug_html(void) {
     //Store JSON in String variable  
     serializeJson(root, webpage);
 
-    //Serial.println("webpage: ");
-    //Serial.println(webpage);
+    return webpage;
+    }
+
+String build_json_putSettings_html(void) {
+    String webpage;
+    
+    StaticJsonDocument<500> root;
+   // DynamicJsonDocument<500> root;
+    root["Settings"] = " PUT n/a yet";
+
+    // things to updated wia PUT, saved to EEPROM
+    // ssid, password
+    // SENSOR_STR
+    
+    //Store JSON in String variable  
+    serializeJson(root, webpage);
+
     return webpage;
     }

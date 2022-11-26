@@ -2,7 +2,7 @@
 #define SETUP_H
 /*************************** setup.h *************************
 
-  Description:  
+  Description:  Node setup
 
 ************************************************************/
 
@@ -14,8 +14,8 @@
 
   #include <Arduino.h>
   #include "ESP8266WiFi.h"
-  #include <ESP8266WebServer.h>   // Include the WebServer library
-
+  #include <ESP8266WebServer.h>  
+  
 //****** Configurations ********************************************************
 
   // Increment number for each node
