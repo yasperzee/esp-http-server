@@ -31,7 +31,7 @@ References:
 *******************************************************************************/
 
 /*------------------------------------------------------------------------------
-    
+  Version 0.9     11'22     Yasperzee     EEPROM support added
   Version 0.8     11'22     Yasperzee     Weather stuff removed
   Version 0.7     11'22     Yasperzee     /nodeDebug added  
   Version 0.6     11'22     Yasperzee     RPM meter support added
@@ -49,12 +49,18 @@ References:
 #include "setup.h"
 #include "read_sensors.h" 
 #include "build_json_docs.h"
-#include "build_light_html.h"
+//#include <EEPROM.h>
+
+#include "eeprom.h"
+#include "node_handlers.cpp"
+
+int reboots_eeprom_address = 0; // address to save reboots
+int sensor_eeprom_address = 1; // address to save reboots
 
 // Functions
 void printInfo();
-void handle_web_client();
-void serverRoutingRest();
+void handle_rest_client();
+void restServerRoutingRest();
 void handleNotFoundRest();
 void getNodeData();
 void getNodeInfo();
@@ -63,39 +69,44 @@ void getNodeDebug();
 void getNodeSettings();
 void putNodeSettings();
 
-u32 reboots=  0; // save to EEPROM
-
-// Set web (REST) server port number
-ESP8266WebServer server(HTTP_PORT);  //Define server object
-
 void setup() {
   
-  reboots++; // to EEPROM for debugging
+  EEPROM.begin(EEPROM_SIZE);
 
   Serial.begin(BAUDRATE);
+
+
   // Connect to Wi-Fi network with SSID and password
   Serial.println("");
   Serial.print("Connecting to ");
   Serial.println(ssid);
 
   WiFi.begin(ssid, password);
-  
-    while (WiFi.status() != WL_CONNECTED){
+    while (WiFi.status() != WL_CONNECTED) {
       delay(WIFI_RETRY_TIME);
       Serial.print(".");
       }  
 
+  //clear_eeprom();
+
+  // read reboots count from EEPROM, increment and write back
+  int reboots = read_eeprom(reboots_eeprom_address);
+  reboots++;
+  write_eeprom(reboots_eeprom_address, reboots);
+  Serial.print("Reboots: ");
+  Serial.println(reboots);
+
   printInfo();
   
   //Associate handler function to web requests
-  serverRoutingRest();
-  server.on(F("/nodeData"), HTTP_GET, getNodeData);
-  server.on(F("/nodeInfo"), HTTP_GET, getNodeInfo); 
-  server.on(F("/nodeDebug"), HTTP_GET, getNodeDebug); 
-  server.on(F("/nodeSettings"), HTTP_GET, getNodeSettings); 
-  server.on(F("/nodeSetup"), HTTP_PUT, putNodeSettings); 
-  server.onNotFound(handleNotFoundRest);        // When a Rest client requests an unknown URI (i.e. something other than "/"), call function "handleNotFoundRest"
-  server.begin(); 
+  restServerRoutingRest();
+  rest_server.on(F("/nodeData"), HTTP_GET, getNodeData);
+  rest_server.on(F("/nodeInfo"), HTTP_GET, getNodeInfo); 
+  rest_server.on(F("/nodeDebug"), HTTP_GET, getNodeDebug); 
+  rest_server.on(F("/nodeSettings"), HTTP_GET, getNodeSettings); 
+  rest_server.on(F("/nodeSettings"), HTTP_PUT, putNodeSettings);
+  rest_server.onNotFound(handleNotFoundRest);        // When a Rest client requests an unknown URI (i.e. something other than "/"), call function "handleNotFoundRest"
+  rest_server.begin(); 
 
   // Infrared sensor for Tacometer
   pinMode(RPM_PIN, INPUT_PULLUP); // use external pull-up resistor
@@ -104,63 +115,8 @@ void setup() {
 
 void loop() {    
  
-  //Handle Client requests
-  handle_web_client();
+  handle_rest_client();
   } // loop
-
-void handle_web_client(void) {
-  server.handleClient();
-  }
-
-void getNodeData() {
-  String temp = build_json_getdata_html();
-  server.send(200, "text/json", temp);
-  }
-
-void getNodeInfo() {
-  String temp = build_json_getinfo_html();
-  server.send(200, "text/json", temp);
-  }
-
-void getNodeDebug() {
-  String temp = build_json_getDebug_html();
-  server.send(200, "text/json", temp);
-  }
-  
-void getNodeSettings() {
-  String temp = build_json_getSettings_html();
-  server.send(200, "text/json", temp);
-  }
-
-  void putNodeSettings() {
-  String temp = build_json_putSettings_html();
-  server.send(200, "text/json", temp);
-  }
-  
-// Manage not found URL ( Rest)
-void handleNotFoundRest() {
-  String message = "File Not Found\n";
-  message += "URI: ";
-  message += server.uri();
-  message += "\nMethod: ";
-  message += (server.method() == HTTP_GET) ? "GET" : "POST";
-  message += "\nArguments: ";
-  message += server.args();
-  message += "\n";
-  for (uint8_t i = 0; i < server.args(); i++) {
-    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
-    }
-  server.send(404, "text/plain", message);
-  }
-
-void serverRoutingRest() {
-  server.on("/", HTTP_GET, []() {
-    // Send webpage
-    String webpage;
-    webpage = build_light_html();
-    server.send(200, ("text/html"), (webpage));
-    });  
-  }
 
 void printInfo(void) {
     Serial.println("");
@@ -186,5 +142,116 @@ void printInfo(void) {
     Serial.print("Sensor is ");
     Serial.println(SENSOR_STR);
     }
+
+
+
+
+/*
+void clear_eeprom() {
+ 
+  Serial.print("");
+  Serial.print("EEPROM.length: ");
+  Serial.println(EEPROM.length());
+  Serial.print("");
+
+  for (size_t addr = 0 ; addr < EEPROM.length() ; addr++) {
+    int value = EEPROM.read(addr);
+    Serial.print(value);
+    delay(10);
+    }
+  Serial.print("");
+
+  for (size_t i = 0 ; i < EEPROM.length() ; i++) {
+    EEPROM.write(i, 0);
+    //delay(10);
+    }
+  EEPROM.commit();
+
+  Serial.print("");
+
+  for (size_t addr = 0 ; addr < EEPROM.length() ; addr++) {
+    int value = EEPROM.read(addr);
+    Serial.print(value);    
+    delay(10);
+    } 
+  }
+*/
+/*
+int read_eeprom(int address) {
+
+  int value = EEPROM.read(address);
+  return value;
+  }
+*/
+/*
+void write_eeprom( int addr, int value) {
+
+  EEPROM.write(addr, value);
+  delay(10);
+  Serial.print("");
+  if (EEPROM.commit()) {
+    Serial.println("EEPROM successfully committed");
+    } 
+  else {
+    Serial.println("ERROR! EEPROM commit failed");
+    }
+  delay(10);
+  }  
+
+void getNodeSettings(void) {
+  rest_server.handleClient();
+  }
+*/
+/*
+void getNodeData() {
+  String temp = build_json_getdata_html();
+  rest_server.send(200, "text/json", temp);
+  }
+
+void getNodeInfo() {
+  String temp = build_json_getinfo_html();
+  rest_server.send(200, "text/json", temp);
+  }
+
+void getNodeDebug() {
+  String temp = build_json_getDebug_html();
+  rest_server.send(200, "text/json", temp);
+  }
+  
+void getNodeSettings() {
+  String temp = build_json_getSettings_html();
+  rest_server.send(200, "text/json", temp);
+  }
+
+  void putNodeSettings() {
+  String temp = build_json_putSettings_html();
+  rest_server.send(200, "text/json", temp);
+  }
+
+// Manage not found URL ( Rest)
+void handleNotFoundRest() {
+  String message = "File Not Found\n";
+  message += "URI: ";
+  message += rest_server.uri();
+  message += "\nMethod: ";
+  message += (rest_server.method() == HTTP_GET) ? "GET" : "POST";
+  message += "\nArguments: ";
+  message += rest_server.args();
+  message += "\n";
+  for (uint8_t i = 0; i < rest_server.args(); i++) {
+    message += " " + rest_server.argName(i) + ": " + rest_server.arg(i) + "\n";
+    }
+  rest_server.send(404, "text/plain", message);
+  }
+
+void restServerRoutingRest() {
+  rest_server.on("/", HTTP_GET, []() {
+    // Send webpage
+    String webpage;
+    webpage = build_light_html();
+    rest_server.send(200, ("text/html"), (webpage));
+    });  
+  }
+*/
 
     

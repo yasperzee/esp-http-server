@@ -11,6 +11,11 @@
 ------------------------------------------------------------------------------*/
 
 #include "build_json_docs.h"
+//#include "ssid.h"  // SSID and PASS strings for local network
+
+extern int reboots_eeprom_address; // address to save reboots
+extern void write_eeprom( int addr, int value);
+extern int read_eeprom(int address);
 
 String build_json_getdata_html(void) {
     //Values values;
@@ -49,6 +54,8 @@ String build_json_getinfo_html(void) {
     
     //Store JSON in String variable  
     serializeJson(root, webpage);
+    Serial.print("Info  : ");
+    Serial.println(webpage);
 
     return webpage;
     }
@@ -58,11 +65,14 @@ String build_json_getDebug_html(void) {
     
     StaticJsonDocument<500> root;
    // DynamicJsonDocument<500> root;
-    root["Reboots"] = 5; // should be saved to EEPROM
-    
+    // read reboots count from EEPROM, increment and write back
+    int reboots = read_eeprom(reboots_eeprom_address);
+    Serial.print("Reboots: ");
+    Serial.println(reboots);
+   
+    root["Reboots: "] = reboots;
     //Store JSON in String variable  
     serializeJson(root, webpage);
-
     return webpage;
     }
 
@@ -71,8 +81,11 @@ String build_json_getSettings_html(void) {
     
     StaticJsonDocument<500> root;
    // DynamicJsonDocument<500> root;
-    root["Settings"] = "GET n/a yet";
-
+    //root["Settings"] = "GET n/a yet";
+    root["SSID"] = "ssid";
+    root["Router pwd"] = "********";
+    root["Sensor "] = SENSOR_STR;
+ 
     // things to updated wia PUT, saved to EEPROM
     // ssid, password
     // SENSOR_STR
