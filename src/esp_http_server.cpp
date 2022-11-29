@@ -104,12 +104,12 @@ void setup() {
   rest_server.on(F("/nodeInfo"), HTTP_GET, getNodeInfo); 
   rest_server.on(F("/nodeDebug"), HTTP_GET, getNodeDebug); 
   rest_server.on(F("/nodeSettings"), HTTP_GET, getNodeSettings); 
-  rest_server.on(F("/nodeSettings"), HTTP_PUT, putNodeSettings);
+  //rest_server.on(F("/nodeSettings"), HTTP_PUT, putNodeSettings);
   rest_server.onNotFound(handleNotFoundRest);        // When a Rest client requests an unknown URI (i.e. something other than "/"), call function "handleNotFoundRest"
   rest_server.begin(); 
 
   // Infrared sensor for Tacometer
-  pinMode(RPM_PIN, INPUT_PULLUP); // use external pull-up resistor
+  pinMode(RPM_PIN, INPUT_PULLUP); 
   attachInterrupt(digitalPinToInterrupt(RPM_PIN), isr, FALLING);
   } // setup
 

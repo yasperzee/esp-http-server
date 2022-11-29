@@ -17,6 +17,10 @@ extern int reboots_eeprom_address; // address to save reboots
 extern void write_eeprom( int addr, int value);
 extern int read_eeprom(int address);
 
+extern float rev;
+extern float revTime;
+extern float wings;
+
 String build_json_getdata_html(void) {
     //Values values;
     String webpage;
@@ -69,8 +73,10 @@ String build_json_getDebug_html(void) {
     int reboots = read_eeprom(reboots_eeprom_address);
     Serial.print("Reboots: ");
     Serial.println(reboots);
-   
     root["Reboots: "] = reboots;
+    root["Revolutions: "] = rev;
+    root["Rev.time: "] = revTime;
+
     //Store JSON in String variable  
     serializeJson(root, webpage);
     return webpage;
@@ -85,6 +91,7 @@ String build_json_getSettings_html(void) {
     root["SSID"] = "ssid";
     root["Router pwd"] = "********";
     root["Sensor "] = SENSOR_STR;
+    root["RPM wings "] = wings;
  
     // things to updated wia PUT, saved to EEPROM
     // ssid, password
@@ -101,11 +108,15 @@ String build_json_putSettings_html(void) {
     
     StaticJsonDocument<500> root;
    // DynamicJsonDocument<500> root;
-    root["Settings"] = " PUT n/a yet";
+    root["Settings"] = " Update settins n/a yet";
 
-    // things to updated wia PUT, saved to EEPROM
-    // ssid, password
-    // SENSOR_STR
+    // things to updated wia PUT, saved to EEPROM, username & password required
+        //  ssid, password
+        //  SENSOR_STR
+        //  wings a.k.a ppr PulsesPerRevolution
+        //  Sensor polarity NC, NO
+        //  Hidden ones: reset Reboot counter
+        //              reset  ssid & password
     
     //Store JSON in String variable  
     serializeJson(root, webpage);
