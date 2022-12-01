@@ -11,8 +11,8 @@
 
 ------------------------------------------------------------------------------*/
   
-
 #include <Adafruit_Sensor.h>
+
 #define RPM_PIN 2 // ESP-01
 //#define RPM_PIN 5 // D1 in NodeMcu
 #define SENSOR_STR "Tacometer" // Weather, Environment ...

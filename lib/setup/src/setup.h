@@ -22,6 +22,7 @@
   //#define NODE_ID_STR "Node_00001"  // use ESP.getChipId(); 
 
   #define APP_SW_VERSION "zee_esp_http_0.1.0_dev"
+  #define HW_VERSION "zee_esp_tacometer_0.1.0_demo"
   #define NODEMCU_STR "ESP-01s"
 
 

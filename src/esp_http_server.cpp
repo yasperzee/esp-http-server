@@ -31,6 +31,7 @@ References:
 *******************************************************************************/
 
 /*------------------------------------------------------------------------------
+  Version 1.0     11'22     Yasperzee     Wifi manager added
   Version 0.9     11'22     Yasperzee     EEPROM support added
   Version 0.8     11'22     Yasperzee     Weather stuff removed
   Version 0.7     11'22     Yasperzee     /nodeDebug added  
@@ -45,18 +46,18 @@ References:
 --------------------------------------------------------------------------------------------*/
 
 // includes
-#include "ssid.h"  // SSID and PASS strings for local network
 #include "setup.h"
 #include "read_sensors.h" 
 #include "build_json_docs.h"
-//#include <EEPROM.h>
 
 #include "eeprom.h"
 #include "node_handlers.cpp"
 
-int reboots_eeprom_address = 0; // address to save reboots
-int sensor_eeprom_address = 1; // address to save reboots
+#include <WiFiManager.h> 
 
+int reboots_eeprom_address = 0; // address to save reboots
+int sensor_eeprom_address = 1; //  Sensor string to EEPROM
+extern int wings;
 // Functions
 void printInfo();
 void handle_rest_client();
@@ -76,6 +77,36 @@ void setup() {
   Serial.begin(BAUDRATE);
 
 
+    // WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
+    // it is a good practice to make sure your code sets wifi mode how you want it.
+
+    //WiFiManager
+    WiFiManager wifiManager;
+
+    //reset saved settings, for debugging
+    //wifiManager.resetSettings();
+
+     // Automatically connect using saved credentials,
+    // if connection fails, it starts an access point with the specified name ( "AutoConnectAP"),
+    // if empty will auto generate SSID, if password is blank it will be anonymous AP (wm.autoConnect())
+    // then goes into a blocking loop awaiting configuration and will return success result
+
+    bool result;
+    // result = wifiManager.autoConnect(); // auto generated AP name from chipid
+    result = wifiManager.autoConnect("AutoConnectAP"); // anonymous ap
+    //result = wifiManager.autoConnect("AutoConnectAP","password"); // password protected ap
+
+    if(!result) {
+        Serial.println("Failed to connect");
+        // ESP.restart();
+    } 
+    else {
+        //if you get here you have connected to the WiFi    
+        Serial.println("connected...yeey :)");
+    }
+
+
+/*
   // Connect to Wi-Fi network with SSID and password
   Serial.println("");
   Serial.print("Connecting to ");
@@ -86,7 +117,7 @@ void setup() {
       delay(WIFI_RETRY_TIME);
       Serial.print(".");
       }  
-
+*/
   //clear_eeprom();
 
   // read reboots count from EEPROM, increment and write back
@@ -139,8 +170,12 @@ void printInfo(void) {
     Serial.println(NODEMCU_STR);
     Serial.print("APP_SW_VERSION is ");
     Serial.println(APP_SW_VERSION);
+     Serial.print("HW_VERSION is ");
+    Serial.println(HW_VERSION);
     Serial.print("Sensor is ");
     Serial.println(SENSOR_STR);
+    Serial.print("Wings is ");
+    Serial.println(wings);
     }
 
 
