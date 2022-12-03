@@ -26,6 +26,7 @@ void write_eeprom( int addr, int value) {
   delay(10);
   }  
 
+// boolean clear_eeprom(int start_addr, int lenght)
 void clear_eeprom() {
  
   Serial.print("");

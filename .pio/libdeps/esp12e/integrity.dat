@@ -1,3 +1,5 @@
-adafruit/Adafruit Unified Sensor@^1.1.6
-ArduinoJson
+SPI
+tzapu/WiFiManager@^0.16.0
 eeprom
+ArduinoJson
+adafruit/Adafruit MLX90614 Library@^2.1.3

@@ -17,7 +17,6 @@
 #include "ESP8266WiFi.h"
 #include "setup.h"
 
-
 String build_json_getdata_html(void);
 String build_json_getinfo_html(void);
 String build_json_getDebug_html(void);

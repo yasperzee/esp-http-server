@@ -54,6 +54,6 @@ void restServerRoutingRest() {
     });  
   }
 
-  void handle_rest_client(void) {
+  void handle_iot_rest_client() {
     rest_server.handleClient();
   }
