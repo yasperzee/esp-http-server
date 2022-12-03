@@ -29,7 +29,6 @@ void getNodeSettings() {
   rest_server.send(200, "text/json", temp);
   }
 
-  // Manage not found URL ( Rest)
 void handleNotFoundRest() {
   String message = "File Not Found\n";
   message += "URI: ";

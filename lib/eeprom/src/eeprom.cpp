@@ -1,19 +1,21 @@
+/***************************eeprom.cpp************************************
 
+    Description:    
+*******************************************************************************/
+
+/*------------------------------------------------------------------------------
+    Version 0.1     Yasperzee   12'22   Cleaning and refactoring
+
+#TODO:
+------------------------------------------------------------------------------*/
 #include "eeprom.h"
 
-//#include "lib/eeprom/eeprom.h"
-/*
-#include "setup.h"
-#include <EEPROM.h>
-*/
 int read_eeprom(int address) {
-
   int value = EEPROM.read(address);
   return value;
   }
 
 void write_eeprom( int addr, int value) {
-
   EEPROM.write(addr, value);
   delay(10);
   Serial.print("");
@@ -28,7 +30,6 @@ void write_eeprom( int addr, int value) {
 
 // boolean clear_eeprom(int start_addr, int lenght)
 void clear_eeprom() {
- 
   Serial.print("");
   Serial.print("EEPROM.length: ");
   Serial.println(EEPROM.length());

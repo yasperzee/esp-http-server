@@ -1,16 +1,17 @@
-/*************************build_json_docs.cpp**********************************
+/*************************build_json_docs.cpp***********************************
 
-    Description:     Build responses
+    Description:     Builds responses
 
 *******************************************************************************/
 
-/* ------------ Version history ------------------------------------------------
+/* -----------------------------------------------------------------------------
+
+    Version 0.3     Yasperzee   12'22   Cleaning and refactoring
     Version 0.2     Yasperzee   11'22   IR TEMPERATURE sensor support
     Version 0.1     Yasperzee   11'22   RPM measurement 
 
 #TODO:
 ------------------------------------------------------------------------------*/
-
 #include "build_json_docs.h"
 
 extern int reboots_eeprom_address; // address to save reboots
@@ -27,9 +28,7 @@ String build_json_getdata_html(void) {
     //Values values;
     String webpage;
     StaticJsonDocument<500> root;
-
 #ifdef SENSOR_RPM
-    //values= read_dht_sensor();
     float r= get_rpm();
     float rpm = roundf(r * 100) / 100; // 2 decimals 
     StaticJsonDocument<500> root;
@@ -40,10 +39,10 @@ String build_json_getdata_html(void) {
     get_ir_temperature();
     root["IR_TEMP_AMBIENT: "] = values.ir_ambient_temp;
     root["IR_TEMP_OBJECT: "] = values.ir_object_temp;
-
 #endif
     //Store JSON in String variable  
     serializeJson(root, webpage);
+
     return webpage;
     }
 
@@ -68,10 +67,8 @@ String build_json_getinfo_html(void) {
 
 String build_json_getDebug_html(void) {
     String webpage;
-    
     StaticJsonDocument<500> root;
-    // DynamicJsonDocument<500> root;
-    //read reboots count from EEPROM, increment and write back
+    //DynamicJsonDocument<500> root;
     //root["CORE_VERSION"] = ESP.getCoreVersion();
     //root["SDK_VERSION"] = ESP.getSdkVersion();
     root["APP_SW"] = APP_SW_VERSION;
@@ -79,7 +76,6 @@ String build_json_getDebug_html(void) {
     root["NODE_FUNCTION"] = NODE_FUNCTION;
     root["SENSOR_MODEL_STR"] = SENSOR_MODEL_STR;
     
-     
     int reboots = read_eeprom(reboots_eeprom_address);
     Serial.print("Reboots: ");
     Serial.println(reboots);
@@ -88,35 +84,26 @@ String build_json_getDebug_html(void) {
     root["Revolutions: "] = rev;
     root["Rev.time: "] = revTime;
 #elif defined SENSOR_IR_TEMPERATURE
-// Add something if any...
+    // Add something if any...
 #endif
     //Store JSON in String variable  
     serializeJson(root, webpage);
+
     return webpage;
     }
 
-
 String build_json_getSettings_html(void) {
     String webpage;
-    
     StaticJsonDocument<500> root;
    // DynamicJsonDocument<500> root;
     //root["Settings"] = "GET n/a yet";
     root["Node function "] = NODE_FUNCTION;
     root["Sensor model "] = SENSOR_MODEL_STR;
-    
 #ifdef SENSOR_RPM
    root["RPM wings "] = wings;
 #elif defined SENSOR_IR_TEMPERATURE
-
-root["Emissivity "] = new_emissivity;
+    root["Emissivity "] = new_emissivity;
 #endif
-    
- 
-    // things to updated wia PUT, saved to EEPROM
-    // SENSOR_STR
-    // wings
-    
     //Store JSON in String variable  
     serializeJson(root, webpage);
 
@@ -129,7 +116,6 @@ String build_json_putSettings_html(void) {
     StaticJsonDocument<500> root;
    // DynamicJsonDocument<500> root;
     root["Settings"] = " Update settins n/a yet";
-
     // things to updated wia PUT, saved to EEPROM, username & password required
         //  ssid, password 
         //  SENSOR_STR

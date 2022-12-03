@@ -31,6 +31,8 @@ References:
 *******************************************************************************/
 
 /*------------------------------------------------------------------------------
+  Version 1.3     12'22     Yasperzee     Cleaning and refactoring
+  Version 1.2     12'22     Yasperzee     IR Thermometer support added
   Version 1.0     11'22     Yasperzee     Wifi manager added
   Version 0.9     11'22     Yasperzee     EEPROM support added
   Version 0.8     11'22     Yasperzee     Weather stuff removed
@@ -44,30 +46,26 @@ References:
   Version 1.1b    4'19      Yasperzee     Something. . .
     
 --------------------------------------------------------------------------------------------*/
-
-// includes
 #include "setup.h"
 #include "debug.h"
 #include "read_sensors.h" 
 #include "build_json_docs.h"
-
 #include "eeprom.h"
 #include "node_handlers.cpp"
-
 #include <WiFiManager.h> 
 
 extern int wings;
 
 // Globals
 Values values;
+
+//EEPROM stuff
 uint16 reboots_eeprom_address = 0; // address to save reboots
 int reboots_eeprom_length = sizeof(reboots_eeprom_address); // size of data to save eeprom
-
 uint8 wings_eeprom_address = sizeof(reboots_eeprom_address)+1; // address to save wings
 int wings_eeprom_length = sizeof(wings_eeprom_address); // size of data to save eeprom
 
 void setup() {
-
 #ifdef SENSOR_RPM
   // Infrared sensor for Tacometer
   pinMode(RPM_PIN, INPUT_PULLUP); 
@@ -89,32 +87,29 @@ void setup() {
   Serial.print("Wings from EEPROM: ");
   Serial.println(wings);
 
-  
+  // WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
+  // it is a good practice to make sure your code sets wifi mode how you want it.
+  WiFiManager wifiManager;
 
-    // WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
-    // it is a good practice to make sure your code sets wifi mode how you want it.
+  //reset saved WifiManager settings, for debugging  
+  //wifiManager.resetSettings();
 
-    WiFiManager wifiManager;
+  // Automatically connect using saved credentials,
+  // if connection fails, it starts an access point with the specified name ( "AutoConnectAP"),
+  // if empty will auto generate SSID, if password is blank it will be anonymous AP (wm.autoConnect())
+  // then goes into a blocking loop awaiting configuration and will return success result
+  bool result;
+  // result = wifiManager.autoConnect(); // auto generated AP name from chipid
+  result = wifiManager.autoConnect("AutoConnectAP"); // anonymous ap
+  //result = wifiManager.autoConnect("AutoConnectAP","password"); // password protected ap
 
-    //reset saved WifiManager settings, for debugging
-    //wifiManager.resetSettings();
-
-     // Automatically connect using saved credentials,
-    // if connection fails, it starts an access point with the specified name ( "AutoConnectAP"),
-    // if empty will auto generate SSID, if password is blank it will be anonymous AP (wm.autoConnect())
-    // then goes into a blocking loop awaiting configuration and will return success result
-    bool result;
-    // result = wifiManager.autoConnect(); // auto generated AP name from chipid
-    result = wifiManager.autoConnect("AutoConnectAP"); // anonymous ap
-    //result = wifiManager.autoConnect("AutoConnectAP","password"); // password protected ap
-
-    if(!result) {
-      Serial.println("Failed to connect WiFi");
-      // ESP.restart();
+  if(!result) {
+    Serial.println("Failed to connect WiFi");
+    // ESP.restart();
     } 
-    else { 
-      Serial.println("WiFi connected, IP address: ");
-      Serial.println(WiFi.localIP());
+  else { 
+    Serial.println("WiFi connected, IP address: ");
+    Serial.println(WiFi.localIP());
     }
 
   //Associate handler functions to web requests
@@ -134,7 +129,6 @@ void setup() {
 #endif
 
   printInfo();
-//
   } // setup
 
 void loop() {    

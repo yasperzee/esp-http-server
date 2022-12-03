@@ -6,6 +6,7 @@
 *******************************************************************************/
 
 /* -----------------------------Version history --------------------------------
+    Version 0.2     Yasperzee   12'22    Cleaning and refactoring
     Version 0.1     Yasperzee   11'22   Build basic welcome page
 
 #TODO:
@@ -14,7 +15,6 @@
 #include "build_light_html.h"
 
 String build_light_html(void) {
-    
     //Values values;
     String webpage;
 
@@ -27,7 +27,7 @@ String build_light_html(void) {
     webpage += "</style></head>";
 
     if(true) {
-        webpage += "Welcome to the REST IOT Web Server";
+        webpage += "Welcome to the REST IOT Server on ESP8266";
         }
     else {
         webpage += "<body>";
@@ -42,9 +42,9 @@ String build_light_html(void) {
         webpage +=  "Info: ";
         webpage += "</info>";
         }
-
     webpage += "</body></html>";
     // The HTTP response ends with another blank line
     webpage += "";
+
     return (webpage);
     } // build_light_html

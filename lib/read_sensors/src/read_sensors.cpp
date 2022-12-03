@@ -1,11 +1,12 @@
-/***************************read_sensors.cpp*********************************
+/***************************read_sensors.cpp************************************
 
     Description:    Read sensor and return Value
                     Supported sensors: Optic RPM sensors 
 
 *******************************************************************************/
 
-/* ------------ Version history ------------------------------------------------
+/*------------------------------------------------------------------------------
+    Version 0.5     Yasperzee   12'22   Cleaning and refactoring
     Version 0.4     Yasperzee   11'22   IR TEMPERATURE sensor support
     Version 0.3     Yasperzee   11'22   Weather stuff removed
     Version 0.2     Yasperzee   11'22   RPM meter support added
@@ -14,9 +15,6 @@
 #TODO:
 ------------------------------------------------------------------------------*/
 #include "read_sensors.h"
-#include <Adafruit_MLX90614.h>
-
-
 
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
@@ -30,25 +28,20 @@ int   newtime;
 float revTime;
 int wings= 1; // PulsesPerRevolution, for Olimex SNS-IR-3-8 set to 2.
 
-// IR Temperature meter stuff
+// IR Thermometer stuff
 //====== CHANGE THIS ========
 double new_emissivity =1.00;
 //===========================
 
 void IRAM_ATTR isr() {
-    //detachInterrupt(RPM_PIN); //detaches the interrupt
     rev++;
-    //Serial.print("rev: (isr) ");
-    //Serial.println(rev);
-    //digitalWrite (DEBUG_PIN, LOW);  // Making PN LOW.
+    //digitalWrite (DEBUG_PIN, LOW);  
     //delay(2);  // Some Delay
-    //digitalWrite (DEBUG_PIN, HIGH); // Making PIN High.
-
-    //attachInterrupt(digitalPinToInterrupt(RPM_PIN), isr, FALLING);
+    //digitalWrite (DEBUG_PIN, HIGH); 
     }
 
 float get_rpm() {
-    detachInterrupt(RPM_PIN); //detaches the interrupt
+    detachInterrupt(RPM_PIN);
     newtime=millis()-oldtime; //finds the time 
     wings= 1; // PulsesPerRevolution, for Olimex SNS-IR-3-8 set to 2, it sends pulse on FALLING and RAISING edges
     float RPMnew = rev/wings; 
@@ -100,12 +93,11 @@ void get_ir_temperature()
         }            
 
     Serial.print("MLX90614 ObjectTemperature in C: ");
-
     values.ir_object_temp = mlx.readObjectTempC();
     Serial.println(values.ir_object_temp);
 
     Serial.print("MLX90614 Ambient Temperature in C: ");
     values.ir_ambient_temp = mlx.readObjectTempC();
     Serial.println(values.ir_ambient_temp);
-    Serial.print("");
+    Serial.println();
     }
