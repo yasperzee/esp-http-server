@@ -2,7 +2,9 @@
 #define READ_SENSORS_H
 
 /*************************** read_sensors.h ************************************
+ 
   Description:  
+  
 *******************************************************************************/
 /*------------------------------------------------------------------------------
   Version 0.5     Yasperzee   12'22     Cleaning and refactoring
@@ -11,6 +13,7 @@
   Version 0.2     Yasperzee   11'22     RPM support
   Version 0.1     Yasperzee   11'22     Imported to platformio
 
+#TODO:
 ------------------------------------------------------------------------------*/
 #include <Arduino.h>
 #include <Adafruit_MLX90614.h>
@@ -30,12 +33,19 @@ struct Values {
     double rpm            = ERROR_VALUE;
     double ir_object_temp = ERROR_VALUE;
     double ir_ambient_temp= ERROR_VALUE;
+    double emissivity     = 1.00;
     //int fail_count      = 0;
     };
 
+class ReadSensors {
+  public:
+   // IRAM_ATTR void isr(void);
+    Values get_rpm(void);
+    Values get_ir_temperature();
+   private:
+};
+
 // Functions
-void IRAM_ATTR isr(void);
-float get_rpm(void);
-void get_ir_temperature();
+void IRAM_ATTR isr(void); // ToDo: move to Class
 
 #endif // READ_SENSORS_H

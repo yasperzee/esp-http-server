@@ -1,22 +1,23 @@
-
 /*************************debug.cpp*********************************************
 
     Description:
 
 *******************************************************************************/
 
-/* ------------ Version history ------------------------------------------------
+/* -----------------------------------------------------------------------------
     Version 0.1     Yasperzee   12'22    Cleaning and refactoring
 
 #TODO:
 ------------------------------------------------------------------------------*/
-
 #include "debug.h"
 #include "setup.h"
 
+#include "ESP8266WiFi.h"
+//#include <ESP8266WebServer.h> 
+
 extern int wings;
 
-void printInfo() {
+void Debug_C::printInfo() {
     Serial.println("");
     Serial.println("WiFi connected.");
     Serial.print("IP address: ");
@@ -32,7 +33,7 @@ void printInfo() {
     Serial.print("Chip ID: "); 
     Serial.println(ESP.getChipId()); //returns the ESP8266 chip ID as a 32-bit intege
     Serial.print("SDK version: ");
-    Serial.println(ESP.getSdkVersion());ESP.getSdkVersion(); //returns the SDK version as a char.
+    Serial.println(ESP.getSdkVersion()); //ESP.getSdkVersion(); //returns the SDK version as a char.
     Serial.print("Node is ");
     Serial.println(NODEMCU_STR);
     Serial.print("APP_SW_VERSION is ");

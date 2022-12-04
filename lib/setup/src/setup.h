@@ -1,5 +1,6 @@
 #ifndef SETUP_H
 #define SETUP_H
+
 /*************************** setup.h *******************************************
 
   Description:  Node setup
@@ -14,8 +15,10 @@
 
   ----------------------------------------------------------------------------*/
   #include <Arduino.h>
-  #include "ESP8266WiFi.h"
-  #include <ESP8266WebServer.h>  
+  //#include "ESP8266WiFi.h"
+ //#include <ESP8266WebServer.h>  
+
+//void do_setup(void);
 
 //****** Configurations ******
 

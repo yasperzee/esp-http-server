@@ -1,21 +1,18 @@
-
 /***************************build_light_html.h.cpp******************************
 
     Description:    Build basic welcome page 
 
 *******************************************************************************/
 
-/* -----------------------------Version history --------------------------------
-    Version 0.2     Yasperzee   12'22    Cleaning and refactoring
+/* -----------------------------------------------------------------------------
+    Version 0.2     Yasperzee   12'22   Cleaning and refactoring
     Version 0.1     Yasperzee   11'22   Build basic welcome page
 
 #TODO:
 ------------------------------------------------------------------------------*/
-
 #include "build_light_html.h"
 
 String build_light_html(void) {
-    //Values values;
     String webpage;
 
     // Web Page Heading
@@ -27,7 +24,7 @@ String build_light_html(void) {
     webpage += "</style></head>";
 
     if(true) {
-        webpage += "Welcome to the REST IOT Server on ESP8266";
+        webpage += "Welcome to the REST/Json IOT Server on ESP8266";
         }
     else {
         webpage += "<body>";

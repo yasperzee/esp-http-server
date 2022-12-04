@@ -2,24 +2,26 @@
 #define BUILD_JSON_DOCS_H
 
 /*************************build_json_docs.h*************************************
-    Description:    
+
+    Description:
+
 *******************************************************************************/
 
-/* ------------ Version history ------------------------------------------------
+/* -----------------------------------------------------------------------------
     Version 0.1     Yasperzee   12'22    Cleaning and refactoring
 
 #TODO:
 ------------------------------------------------------------------------------*/
-#include <Arduino.h>
-#include "ArduinoJson.h"
-#include <read_sensors.h>
-#include "ESP8266WiFi.h"
-#include "setup.h"
+//#include <Arduino.h>
 
-String build_json_getdata_html(void);
-String build_json_getinfo_html(void);
-String build_json_getDebug_html(void);
-String build_json_getSettings_html(void);
-String build_json_putSettings_html(void);
+class BuildJsonDocs_C {
+  public:
+    String build_json_getdata_html(void);
+    String build_json_getinfo_html(void);
+    String build_json_getDebug_html(void);
+    String build_json_getSettings_html(void);
+    String build_json_putSettings_html(void);
+  private:
+  };
 
 #endif // BUILD_JSON_DOCS_H

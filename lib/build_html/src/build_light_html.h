@@ -11,9 +11,11 @@
     Version 0.2     Yasperzee   12'22   Cleaning and refactoring
     Version 0.1     Yasperzee   11'22   Imported to platformio
 
+#TODO:
 ------------------------------------------------------------------------------*/
 
 #include <Arduino.h>
+//#include "eeprom.h"
 
 String build_light_html(void);
 
