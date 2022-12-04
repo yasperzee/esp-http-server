@@ -52,9 +52,9 @@ References:
 #include "build_json_docs.h"
 #include "eeprom.h"
 #include <WiFiManager.h> 
-
-//#include "node_handlers.cpp"
 #include "node_handlers.h"
+
+//extern ESP8266WebServer rest_server(HTTP_PORT);
 
 extern int wings;
 
@@ -114,15 +114,7 @@ void setup() {
     Serial.println(WiFi.localIP());
     }
 
-  //Associate handler functions to web requests
-  restServerRoutingRest();
-  rest_server.on(F("/nodeData"), HTTP_GET, getNodeData);
-  rest_server.on(F("/nodeInfo"), HTTP_GET, getNodeInfo); 
-  rest_server.on(F("/nodeDebug"), HTTP_GET, getNodeDebug); 
-  rest_server.on(F("/nodeSettings"), HTTP_GET, getNodeSettings); 
-  //rest_server.on(F("/nodeSettings"), HTTP_PUT, putNodeSettings);
-  rest_server.onNotFound(handleNotFoundRest);        // When a Rest client requests an unknown URI (i.e. something other than "/"), call function "handleNotFoundRest"
-  rest_server.begin(); 
+  set_callbacks();
 
 #ifdef SENSOR_RPM
   attachInterrupt(digitalPinToInterrupt(RPM_PIN), isr, FALLING);; 

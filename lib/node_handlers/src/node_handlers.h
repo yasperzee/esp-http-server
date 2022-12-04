@@ -13,6 +13,9 @@
 #include "build_json_docs.h"
 #include "build_light_html.h"
 
+//ESP8266WebServer rest_server(HTTP_PORT);
+
+void set_callbacks();
 void getNodeData();
 void getNodeInfo();
 void getNodeDebug();
