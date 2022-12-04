@@ -51,8 +51,10 @@ References:
 #include "read_sensors.h" 
 #include "build_json_docs.h"
 #include "eeprom.h"
-#include "node_handlers.cpp"
 #include <WiFiManager.h> 
+
+//#include "node_handlers.cpp"
+#include "node_handlers.h"
 
 extern int wings;
 
