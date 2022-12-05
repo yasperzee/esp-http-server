@@ -6,7 +6,6 @@
   Description:  Node setup
 
 *******************************************************************************/
-
 /*------------------------------------------------------------------------------
   Version 0.4     12'22     Yasperzee     Cleaning and refactoring
   Version 0.3     12'22     Yasperzee     IR Thermometer support added

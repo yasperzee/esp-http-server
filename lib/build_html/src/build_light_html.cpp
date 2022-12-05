@@ -1,11 +1,9 @@
-
 /***************************build_light_html.h.cpp******************************
 
     Description:    Build basic welcome page 
 
 *******************************************************************************/
-
-/* -----------------------------Version history --------------------------------
+/* -----------------------------------------------------------------------------
     Version 0.2     Yasperzee   12'22    Cleaning and refactoring
     Version 0.1     Yasperzee   11'22   Build basic welcome page
 

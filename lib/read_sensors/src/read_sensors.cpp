@@ -4,7 +4,6 @@
                     Supported sensors: Optic RPM sensors 
 
 *******************************************************************************/
-
 /*------------------------------------------------------------------------------
     Version 0.5     Yasperzee   12'22   Cleaning and refactoring
     Version 0.4     Yasperzee   11'22   IR TEMPERATURE sensor support
