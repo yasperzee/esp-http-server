@@ -1,6 +1,6 @@
 /*************************build_json_docs.cpp***********************************
 
-    Description:     Build responses
+    Description:     Builds responses
 
 *******************************************************************************/
 
@@ -12,16 +12,11 @@
 
 #TODO:
 ------------------------------------------------------------------------------*/
-#include "ArduinoJson.h"
 #include "build_json_docs.h"
-#include "eeprom.h"
-#include "read_sensors.h"
-#include "ESP8266WiFi.h"
-#include "setup.h"
 
-
-
-extern int reboots_eeprom_address; // EEPROM address to save reboots
+extern int reboots_eeprom_address; // address to save reboots
+extern void write_eeprom( int addr, int value);
+extern int read_eeprom(int address);
 
 extern float rev;
 extern float revTime;
@@ -29,20 +24,19 @@ extern int wings;
 extern int new_emissivity;
 extern Values values;
 
-extern localEeprom  eeprom_c;
-
 ReadSensors read_sensors;
 
-String buildJsonDocs::build_json_getdata_html(void) {
+String build_json_getdata_html(void) {
+    //Values values;
     String webpage;
     StaticJsonDocument<500> root;
 #ifdef SENSOR_RPM
-    float r= get_rpm();
+    float r=  read_sensors.get_rpm();
     float rpm = roundf(r * 100) / 100; // 2 decimals 
     StaticJsonDocument<500> root;
     // DynamicJsonDocument<500> root;
-    //root["RPM"] = values.rpm;
-    root["RPM"] = rpm;
+    root["RPM"] = values.rpm;
+    //root["RPM"] = rpm;
 #elif defined SENSOR_IR_TEMPERATURE
     read_sensors.get_ir_temperature();
     root["IR_TEMP_AMBIENT: "] = values.ir_ambient_temp;
@@ -54,8 +48,9 @@ String buildJsonDocs::build_json_getdata_html(void) {
     return webpage;
     }
 
-String buildJsonDocs::build_json_getinfo_html(void) {
+String build_json_getinfo_html(void) {
     String webpage;
+    // Values values;
     StaticJsonDocument<500> root;
    // DynamicJsonDocument<500> root;
     root["RSSI"] = WiFi.RSSI();
@@ -72,7 +67,7 @@ String buildJsonDocs::build_json_getinfo_html(void) {
     return webpage;
     }
 
-String buildJsonDocs::build_json_getDebug_html(void) {
+String build_json_getDebug_html(void) {
     String webpage;
     StaticJsonDocument<500> root;
     //DynamicJsonDocument<500> root;
@@ -83,7 +78,7 @@ String buildJsonDocs::build_json_getDebug_html(void) {
     root["NODE_FUNCTION"] = NODE_FUNCTION;
     root["SENSOR_MODEL_STR"] = SENSOR_MODEL_STR;
     
-    int reboots = eeprom_c.read_eeprom(reboots_eeprom_address);
+    int reboots = read_eeprom(reboots_eeprom_address);
     Serial.print("Reboots: ");
     Serial.println(reboots);
     root["Reboots: "] = reboots;
@@ -99,7 +94,7 @@ String buildJsonDocs::build_json_getDebug_html(void) {
     return webpage;
     }
 
-String buildJsonDocs::build_json_getSettings_html(void) {
+String build_json_getSettings_html(void) {
     String webpage;
     StaticJsonDocument<500> root;
    // DynamicJsonDocument<500> root;
@@ -117,7 +112,7 @@ String buildJsonDocs::build_json_getSettings_html(void) {
     return webpage;
     }
 
-String buildJsonDocs::build_json_putSettings_html(void) {
+String build_json_putSettings_html(void) {
     String webpage;
     
     StaticJsonDocument<500> root;

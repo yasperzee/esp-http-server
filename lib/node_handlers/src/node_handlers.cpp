@@ -14,28 +14,30 @@
 
 ESP8266WebServer rest_server(HTTP_PORT);
 
+buildJsonDocs  build_json_docs;
+
 void getNodeData() {
-  String temp = build_json_getdata_html();
+  String temp = build_json_docs.build_json_getdata_html();
   rest_server.send(200, "text/json", temp);
   }
  
   void getNodeInfo() {
-  String temp = build_json_getinfo_html();
+  String temp = build_json_docs.build_json_getinfo_html();
   rest_server.send(200, "text/json", temp);
   }
 
 void getNodeDebug() {
-  String temp = build_json_getDebug_html();
+  String temp = build_json_docs.build_json_getDebug_html();
   rest_server.send(200, "text/json", temp);
   }
   
 void getNodeSettings() {
-  String temp = build_json_getSettings_html();
+  String temp = build_json_docs.build_json_getSettings_html();
   rest_server.send(200, "text/json", temp);
   }
 
   void putNodeSettings() {
-  String temp = build_json_putSettings_html();
+  String temp = build_json_docs.build_json_putSettings_html();
   rest_server.send(200, "text/json", temp);
   }
 

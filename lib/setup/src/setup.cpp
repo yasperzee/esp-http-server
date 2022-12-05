@@ -17,7 +17,7 @@ extern int wings;
 extern void set_callbacks();
 
 //EEPROM stuff
-//extern LocalEeprom_C  eeprom_c;
+extern localEeprom  eeprom_c;
 uint16 reboots_eeprom_address = 0; // address to save reboots
 int reboots_eeprom_length = sizeof(reboots_eeprom_address); // size of data to save eeprom
 uint8 wings_eeprom_address = sizeof(reboots_eeprom_address)+1; // address to save wings
@@ -36,10 +36,10 @@ void do_setup() {
   //clear_eeprom();
 
   // read reboots count from EEPROM, increment and write back
-  int reboots = read_eeprom(reboots_eeprom_address);
+  int reboots = eeprom_c.read_eeprom(reboots_eeprom_address);
   reboots++;
-  write_eeprom(reboots_eeprom_address, reboots);
-  write_eeprom(wings_eeprom_address, wings);
+  eeprom_c.write_eeprom(reboots_eeprom_address, reboots);
+  eeprom_c.write_eeprom(wings_eeprom_address, wings);
  
   // WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
   // it is a good practice to make sure your code sets wifi mode how you want it.

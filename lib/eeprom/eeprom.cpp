@@ -1,7 +1,6 @@
-/***************************eeprom.cpp******************************************
+/***************************eeprom.cpp************************************
 
     Description:    
-
 *******************************************************************************/
 
 /*------------------------------------------------------------------------------
@@ -11,14 +10,12 @@
 ------------------------------------------------------------------------------*/
 #include "eeprom.h"
 
-localEeprom  eeprom_c;
-
-int localEeprom ::read_eeprom(int address) {
+int read_eeprom(int address) {
   int value = EEPROM.read(address);
   return value;
   }
 
-void localEeprom ::write_eeprom( int addr, int value) {
+void write_eeprom( int addr, int value) {
   EEPROM.write(addr, value);
   delay(10);
   Serial.print("");
@@ -32,7 +29,7 @@ void localEeprom ::write_eeprom( int addr, int value) {
   }  
 
 // boolean clear_eeprom(int start_addr, int lenght)
-void localEeprom ::clear_eeprom() {
+void clear_eeprom() {
   Serial.print("");
   Serial.print("EEPROM.length: ");
   Serial.println(EEPROM.length());
