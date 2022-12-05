@@ -13,6 +13,7 @@
 
 #include "debug.h"
 #include "setup.h"
+#include "ESP8266WiFi.h"
 
 extern int wings;
 

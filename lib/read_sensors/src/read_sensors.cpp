@@ -18,7 +18,7 @@
 
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
-extern Values values;
+Values values;
 
 // RPM stuff
 float rev;
