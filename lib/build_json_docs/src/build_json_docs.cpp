@@ -24,19 +24,21 @@ extern int wings;
 extern int new_emissivity;
 extern Values values;
 
+ReadSensors read_sensors;
+
 String build_json_getdata_html(void) {
     //Values values;
     String webpage;
     StaticJsonDocument<500> root;
 #ifdef SENSOR_RPM
-    float r= get_rpm();
+    float r=  read_sensors.get_rpm();
     float rpm = roundf(r * 100) / 100; // 2 decimals 
     StaticJsonDocument<500> root;
     // DynamicJsonDocument<500> root;
-    //root["RPM"] = values.rpm;
-    root["RPM"] = rpm;
+    root["RPM"] = values.rpm;
+    //root["RPM"] = rpm;
 #elif defined SENSOR_IR_TEMPERATURE
-    get_ir_temperature();
+    read_sensors.get_ir_temperature();
     root["IR_TEMP_AMBIENT: "] = values.ir_ambient_temp;
     root["IR_TEMP_OBJECT: "] = values.ir_object_temp;
 #endif

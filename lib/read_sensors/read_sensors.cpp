@@ -27,46 +27,44 @@ int   oldtime;
 int   newtime;
 float revTime;
 int wings= 1; // PulsesPerRevolution, for Olimex SNS-IR-3-8 set to 2.
-//IRAM_ATTR void  isr();
 
 // IR Thermometer stuff
 //====== CHANGE THIS ========
 double new_emissivity =1.00;
 //===========================
 
-//IRAM_ATTR void ReadSensors:: isr() {
-IRAM_ATTR void isr() {
+void IRAM_ATTR isr() {
     rev++;
     //digitalWrite (DEBUG_PIN, LOW);  
     //delay(2);  // Some Delay
     //digitalWrite (DEBUG_PIN, HIGH); 
     }
 
-Values ReadSensors::get_rpm() {
+float get_rpm() {
     detachInterrupt(RPM_PIN);
     newtime=millis()-oldtime; //finds the time 
     wings= 1; // PulsesPerRevolution, for Olimex SNS-IR-3-8 set to 2, it sends pulse on FALLING and RAISING edges
     float RPMnew = rev/wings; 
-    values.rpm =(RPMnew/newtime)*60000; //calculates rpm
+    rpm=(RPMnew/newtime)*60000; //calculates rpm
     oldtime=millis(); //saves the current time
     int newtime_secs =newtime/1000;
-
     Serial.println("\n___TACHOMETER___");
     Serial.print("rev: ");
     Serial.println(rev);
-    Serial.print(values.rpm);
+    Serial.print(rpm);
     Serial.println(" RPM");
     Serial.print("Time in secs: ");
     Serial.println(newtime_secs);
     Serial.print("wings: ");
     Serial.println(wings);
+
     rev=0;
     attachInterrupt(digitalPinToInterrupt(RPM_PIN), isr, FALLING);
-
-    return values;
+    return rpm;
     }
 
-Values ReadSensors::get_ir_temperature() {
+void get_ir_temperature()
+    {
     Serial.println("\nAdafruit MLX90614 Emissivity Setter.");
 
     // init ir_temp sensor
@@ -79,13 +77,12 @@ Values ReadSensors::get_ir_temperature() {
         Serial.print("Current emissivity = "); 
         Serial.println(mlx.readEmissivity());
 
-        values.emissivity= mlx.readEmissivity();
-         
+        double currentE = mlx.readEmissivity();
         Serial.print("Setting emissivity = "); 
         Serial.println(new_emissivity);
 
         // set new emissivity if not same as current one 
-        if(new_emissivity != values.emissivity) {
+        if(new_emissivity != currentE) {
             mlx.writeEmissivity(new_emissivity); // this does the 0x0000 erase write
    
             Serial.print("New emissivity = "); 
@@ -103,6 +100,4 @@ Values ReadSensors::get_ir_temperature() {
     values.ir_ambient_temp = mlx.readObjectTempC();
     Serial.println(values.ir_ambient_temp);
     Serial.println();
-
-    return values;
     }
