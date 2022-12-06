@@ -14,8 +14,13 @@
 #include "debug.h"
 #include "setup.h"
 #include "ESP8266WiFi.h"
+#include "eeprom.h"
+#include <EEPROM.h>
+#include "read_sensors.h"
 
-extern int wings;
+extern uint8 wings_eeprom_address;
+
+extern localEeprom  eeprom_c;
 
 void printInfo() {
     Serial.println("");
@@ -43,5 +48,7 @@ void printInfo() {
     Serial.print("Node_function");
     Serial.println(NODE_FUNCTION);
     Serial.print("Wings is ");
-    Serial.println(wings);
+    // Read ppr (PulsesPerRevolution) from EEPROM
+    //int wings= eeprom_c.read_eeprom(wings_eeprom_address);
+    //Serial.println(wings);
     }

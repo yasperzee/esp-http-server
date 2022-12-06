@@ -2,11 +2,11 @@
 
     Description:     Build responses
 
-********************************************************************************
+*******************************************************************************/
 /* -----------------------------------------------------------------------------
 
     Version 0.3     Yasperzee   12'22   Cleaning and refactoring
-    Version 0.2     Yasperzee   11'22   IR TEMPERATURE sensor support
+    Version 0.2     Yasperzee   11'22   IR Thermometer sensor support
     Version 0.1     Yasperzee   11'22   RPM measurement 
 
 #TODO:
@@ -17,14 +17,15 @@
 #include "read_sensors.h"
 #include "ESP8266WiFi.h"
 #include "setup.h"
-
+//#include "read_sensors.h"
 
 
 extern int reboots_eeprom_address; // EEPROM address to save reboots
+extern uint8 wings_eeprom_address;
 
 extern float rev;
 extern float revTime;
-extern int wings;
+//extern int wings;
 extern int new_emissivity;
 extern Values values;
 
@@ -36,13 +37,9 @@ String buildJsonDocs::build_json_getdata_html(void) {
     String webpage;
     StaticJsonDocument<500> root;
 #ifdef SENSOR_RPM
-    float r= get_rpm();
-    float rpm = roundf(r * 100) / 100; // 2 decimals 
-    StaticJsonDocument<500> root;
-    // DynamicJsonDocument<500> root;
-    //root["RPM"] = values.rpm;
-    root["RPM"] = rpm;
-#elif defined SENSOR_IR_TEMPERATURE
+    values = read_sensors.get_rpm();
+    root["RPM"] = values.rpm;
+#elif defined SENSOR_IR_THERMOMETER
     read_sensors.get_ir_temperature();
     root["IR_TEMP_AMBIENT: "] = values.ir_ambient_temp;
     root["IR_TEMP_OBJECT: "] = values.ir_object_temp;
@@ -81,17 +78,16 @@ String buildJsonDocs::build_json_getDebug_html(void) {
     root["HardWare"] = HW_VERSION;
     root["NODE_FUNCTION"] = NODE_FUNCTION;
     root["SENSOR_MODEL_STR"] = SENSOR_MODEL_STR;
-    
     int reboots = eeprom_c.read_eeprom(reboots_eeprom_address);
-    Serial.print("Reboots: ");
-    Serial.println(reboots);
-    root["Reboots: "] = reboots;
+    //Serial.print("Reboots: ");
+    //Serial.println(reboots);
 #ifdef SENSOR_RPM
     root["Revolutions: "] = rev;
     root["Rev.time: "] = revTime;
-#elif defined SENSOR_IR_TEMPERATURE
+#elif defined SENSOR_IR_THERMOMETER
     // Add something if any...
 #endif
+    root["Reboots: "] = reboots;
     //Store JSON in String variable  
     serializeJson(root, webpage);
 
@@ -106,9 +102,10 @@ String buildJsonDocs::build_json_getSettings_html(void) {
     root["Node function "] = NODE_FUNCTION;
     root["Sensor model "] = SENSOR_MODEL_STR;
 #ifdef SENSOR_RPM
-   root["RPM wings "] = wings;
-#elif defined SENSOR_IR_TEMPERATURE
-    root["Emissivity "] = new_emissivity;
+   values.wings= eeprom_c.read_eeprom(wings_eeprom_address);
+    root["RPM wings "] = values.wings;
+#elif defined SENSOR_IR_THERMOMETER
+    root["Emissivity "] = values.emissivity;
 #endif
     //Store JSON in String variable  
     serializeJson(root, webpage);
@@ -122,13 +119,16 @@ String buildJsonDocs::build_json_putSettings_html(void) {
     StaticJsonDocument<500> root;
    // DynamicJsonDocument<500> root;
     root["Settings"] = " Update settins n/a yet";
+    eeprom_c.write_eeprom(reboots_eeprom_address, 0);
+
     // things to updated wia PUT, saved to EEPROM, username & password required
-        //  ssid, password 
+        //  ssid, password  obsolete, handled by WiFiManager
         //  SENSOR_STR
-        //  wings a.k.a ppr PulsesPerRevolution
+        //  wings a.k.a ppr -> PulsesPerRevolution for Tachometer
+        //  emissivity for IR Thermometer
         //  Sensor polarity NC, NO
+
         //  Hidden ones: reset Reboot counter
-        //              reset  ssid & password
     
     //Store JSON in String variable  
     serializeJson(root, webpage);

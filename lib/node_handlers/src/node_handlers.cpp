@@ -4,13 +4,14 @@
 
 *******************************************************************************/
 /*------------------------------------------------------------------------------
+  Version 0.3     Yasperzee   12'22     Initial HTML PUT feature added
+  Version 0.2     Yasperzee   12'22     REST endpoins naming changed according to REST naming convention best practices       
   Version 0.1     Yasperzee   12'22     Cleaning and refactoring
  
   #TODO:
 ------------------------------------------------------------------------------*/
 #include "node_handlers.h"
 #include <ESP8266WebServer.h> 
-
 
 ESP8266WebServer rest_server(HTTP_PORT);
 
@@ -73,11 +74,11 @@ void restServerRoutingRest() {
   void set_callbacks() {
   //Associate handler functions to web requests
   restServerRoutingRest();
-  rest_server.on(F("/nodeData"), HTTP_GET, getNodeData);
-  rest_server.on(F("/nodeInfo"), HTTP_GET, getNodeInfo); 
-  rest_server.on(F("/nodeDebug"), HTTP_GET, getNodeDebug); 
-  rest_server.on(F("/nodeSettings"), HTTP_GET, getNodeSettings); 
-  //rest_server.on(F("/nodeSettings"), HTTP_PUT, putNodeSettings);
+  rest_server.on(F("/node-data"), HTTP_GET, getNodeData);
+  rest_server.on(F("/node-info"), HTTP_GET, getNodeInfo); 
+  rest_server.on(F("/node-debug"), HTTP_GET, getNodeDebug); 
+  rest_server.on(F("/node-settings"), HTTP_GET, getNodeSettings); 
+  rest_server.on(F("/node-settings"), HTTP_PUT, putNodeSettings);
   rest_server.onNotFound(handleNotFoundRest);        // When a Rest client requests an unknown URI (i.e. something other than "/"), call function "handleNotFoundRest"
   rest_server.begin(); 
 }

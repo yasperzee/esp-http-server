@@ -1,9 +1,10 @@
-/**************************** esp_http_server.cpp ******************************
+/**************************** main.cpp ******************************
 
-Description:  Read RPM
+Description:  Read RPM(Tacometer) or IR Thermometer, act as REST/Json server,
+              REST endpoints: GET:/node-data, GET:/node-info, GET:/debug, GET:/node-settings. PUT: /node-settings
 
 Components:   - ESP-01 esp8266 NodeMcu
-              - Optic RPM sensor
+              - Optic RPM sensor, IR Thermometer
 
 Librarys:     -
 
@@ -30,6 +31,7 @@ References:
     // https://www.circuitschools.com/diy-tachometer-using-arduino-esp8266-esp32-to-measure-accurate-rpm-with-ir-sensor/
 *******************************************************************************/
 /*------------------------------------------------------------------------------
+  Version 1.4     12'22     Yasperzee     Renamed to main.cpp
   Version 1.3     12'22     Yasperzee     Cleaning and refactoring
   Version 1.2     12'22     Yasperzee     IR Thermometer support added
   Version 1.0     11'22     Yasperzee     Wifi manager added
@@ -44,14 +46,8 @@ References:
   Version 0.1     11'22     Yasperzee     Baseline, pure HTML
   Version 1.1b    4'19      Yasperzee     Something. . .
     
-#TODO:
+#TODO: test OTA
 --------------------------------------------------------------------------------------------*/
-#include "setup.h"
-#include "debug.h"
-#include "read_sensors.h" 
-#include "build_json_docs.h"
-#include "eeprom.h"
-#include <WiFiManager.h> 
 #include "node_handlers.h"
 
 extern void do_setup();

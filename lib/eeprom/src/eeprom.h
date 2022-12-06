@@ -12,7 +12,7 @@
  #TODO:
 ------------------------------------------------------------------------------*/
 #include "setup.h"
-#include <EEPROM.h>
+//#include <EEPROM.h>
 
 class localEeprom {
   public:

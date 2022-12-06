@@ -11,36 +11,67 @@
 #include "setup.h"
 #include "debug.h"
 #include "eeprom.h"
+#include <EEPROM.h>
 #include <WiFiManager.h> 
+#include "read_sensors.h"
 
-extern int wings;
+//extern int wings;
+extern Values values;
 extern void set_callbacks();
+extern void set_emissivity();
 
 //EEPROM stuff
 extern localEeprom  eeprom_c;
-uint16 reboots_eeprom_address = 0; // address to save reboots
+int reboots_eeprom_address = 0; // address to save reboots
 int reboots_eeprom_length = sizeof(reboots_eeprom_address); // size of data to save eeprom
-uint8 wings_eeprom_address = sizeof(reboots_eeprom_address)+1; // address to save wings
+
+uint8 wings_eeprom_address = reboots_eeprom_address+reboots_eeprom_length; // address to save wings
 int wings_eeprom_length = sizeof(wings_eeprom_address); // size of data to save eeprom
+
+uint64 emissivity_eeprom_address = wings_eeprom_address+wings_eeprom_length  ; // address to save emissivity
+int emissivity_eeprom_length = sizeof(emissivity_eeprom_address); // size of data to save eeprom
 
 void do_setup() {
 
 #ifdef SENSOR_RPM // Infrared sensor for Tacometer
   pinMode(RPM_PIN, INPUT_PULLUP); 
-#elif defined SENSOR_IR_TEMPERATURE  // IR Thermometer
+#elif defined SENSOR_IR_THERMOMETER 
   //Do something if any...
+
+  
 #endif
   
   Serial.begin(BAUDRATE);
   EEPROM.begin(EEPROM_SIZE);
   //clear_eeprom();
 
+Serial.print("reboots_eeprom_address: ");
+Serial.println(reboots_eeprom_address);
+Serial.print("reboots_eeprom_length: ");
+Serial.println(reboots_eeprom_length);
+
+Serial.print("wings_eeprom_address: ");
+Serial.println(wings_eeprom_address);
+Serial.print("wings_eeprom_length: ");
+Serial.println(wings_eeprom_length);
+
+Serial.print("emissivity_eeprom_address: ");
+Serial.println(emissivity_eeprom_address);
+Serial.print("emissivity_eeprom_length: ");
+Serial.println(emissivity_eeprom_length);
+
   // read reboots count from EEPROM, increment and write back
   int reboots = eeprom_c.read_eeprom(reboots_eeprom_address);
   reboots++;
   eeprom_c.write_eeprom(reboots_eeprom_address, reboots);
-  eeprom_c.write_eeprom(wings_eeprom_address, wings);
- 
+
+  // Write PPR (PulsesPerRevolution) ro Tachometer to EEPROM
+  //eeprom_c.write_eeprom(wings_eeprom_address, WINGS);
+  values.wings = WINGS;
+
+  //set new emissivity for IR Thermometer if not same as current one
+  //set_emissivity( );
+
   // WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
   // it is a good practice to make sure your code sets wifi mode how you want it.
   WiFiManager wifiManager;
@@ -70,7 +101,7 @@ void do_setup() {
 
 #ifdef SENSOR_RPM
   attachInterrupt(digitalPinToInterrupt(RPM_PIN), isr, FALLING);; 
-#elif defined SENSOR_IR_TEMPERATURE
+#elif defined SENSOR_IR_THERMOMETER
   //Do something if any...
 #endif
 

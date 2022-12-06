@@ -9,6 +9,7 @@
 #TODO:
 ------------------------------------------------------------------------------*/
 #include "eeprom.h"
+#include <EEPROM.h>
 
 localEeprom  eeprom_c;
 
