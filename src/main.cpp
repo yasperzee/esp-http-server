@@ -30,7 +30,7 @@ References:
   // RPM
     // https://www.circuitschools.com/diy-tachometer-using-arduino-esp8266-esp32-to-measure-accurate-rpm-with-ir-sensor/
 *******************************************************************************/
-/*------------------------------------------------------------------------------
+/*------------------------------------------------------------------------------    
   Version 1.4     12'22     Yasperzee     Renamed to main.cpp
   Version 1.3     12'22     Yasperzee     Cleaning and refactoring
   Version 1.2     12'22     Yasperzee     IR Thermometer support added

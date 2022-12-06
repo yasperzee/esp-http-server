@@ -4,7 +4,8 @@
 
 *******************************************************************************/
 /*------------------------------------------------------------------------------
-  Version 0.1     Yasperzee   12'22     Cleaning and refactoring
+  Version 0.2     Yasperzee   12'22         Add HC-SRO4 Ultrasonic Distance Sensor     
+  Version 0.1     Yasperzee   12'22         Cleaning and refactoring
  
   #TODO:
 ------------------------------------------------------------------------------*/
@@ -37,8 +38,8 @@ void do_setup() {
   pinMode(RPM_PIN, INPUT_PULLUP); 
 #elif defined SENSOR_IR_THERMOMETER 
   //Do something if any...
-
-  
+#elif defined SENSOR_ULTRASONIC_DISTANCE
+  //Do something if any...
 #endif
   
   Serial.begin(BAUDRATE);
@@ -103,6 +104,8 @@ Serial.println(emissivity_eeprom_length);
   attachInterrupt(digitalPinToInterrupt(RPM_PIN), isr, FALLING);; 
 #elif defined SENSOR_IR_THERMOMETER
   //Do something if any...
+  #elif defined SENSOR_ULTRASONIC_DISTANCE
+  //Do something if any..
 #endif
 
   printInfo();

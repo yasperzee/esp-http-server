@@ -7,10 +7,11 @@
 
 *******************************************************************************/
 /*------------------------------------------------------------------------------
-  Version 0.4     12'22     Yasperzee     Cleaning and refactoring
-  Version 0.3     12'22     Yasperzee     IR Thermometer support added
-  Version 0.2     12'22     Yasperzee     Sensor model and type added
-  Version 0.1     11'22     Yasperzee     Imported to platformio
+  Version 0.5     Yasperzee   12'22          Add HC-SRO4 Ultrasonic Distance Sensor     
+  Version 0.4     Yasperzee   12'22          Cleaning and refactoring
+  Version 0.3     Yasperzee   12'22          IR Thermometer support added
+  Version 0.2     Yasperzee   12'22          Sensor model and type added
+  Version 0.1     Yasperzee   12'22          Imported to platformio
 
   ----------------------------------------------------------------------------*/
   #include <Arduino.h>
@@ -22,8 +23,9 @@
 //************ Configurations ************
 
   // Select Sensor type
-  #define SENSOR_RPM
+  //#define SENSOR_RPM
   //#define SENSOR_IR_THERMOMETER
+  #define SENSOR_ULTRASONIC_DISTANCE
   
   // Tachometer settings
   #define WINGS 1  // PulsesPerRevolution

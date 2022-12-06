@@ -7,6 +7,7 @@
   
 *******************************************************************************/
 /*------------------------------------------------------------------------------
+  Version 0.6     Yasperzee   12'22   Add HC-SRO4 Ultrasonic Distance Sensor  
   Version 0.5     Yasperzee   12'22     Cleaning and refactoring
   Version 0.4     Yasperzee   11'22     IR TEMPERATURE sensor support
   Version 0.3     Yasperzee   11'22     Weather stuff removed
@@ -15,7 +16,7 @@
 
 #TODO:
 ------------------------------------------------------------------------------*/
-#include <Arduino.h>
+//#include <Arduino.h>
 #include "setup.h"
 
 // constants
@@ -34,14 +35,18 @@ struct Values {
     double emissivity     = EMISSIVITY;
     double ir_object_temp = ERROR_VALUE;
     double ir_ambient_temp= ERROR_VALUE;
+    double distanceCm     = ERROR_VALUE;
+
+
     };
 
 class ReadSensors {
   public:
     Values get_rpm(void);
     Values get_ir_temperature();
-    // IRAM_ATTR void isr(void);
+    // IRAM_ATTR void isr();
     // void set_emissivity();
+    Values ReadUltrasonicSensor(); 
    private:
 };
 
@@ -49,3 +54,5 @@ class ReadSensors {
 void IRAM_ATTR isr(void); // ToDo: move to Class
 
 #endif // READ_SENSORS_H
+
+

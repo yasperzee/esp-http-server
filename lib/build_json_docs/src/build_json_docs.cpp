@@ -4,7 +4,7 @@
 
 *******************************************************************************/
 /* -----------------------------------------------------------------------------
-
+    Version 0.4     Yasperzee   12'22   Add HC-SRO4 Ultrasonic Distance Sensor 
     Version 0.3     Yasperzee   12'22   Cleaning and refactoring
     Version 0.2     Yasperzee   11'22   IR Thermometer sensor support
     Version 0.1     Yasperzee   11'22   RPM measurement 
@@ -43,8 +43,11 @@ String buildJsonDocs::build_json_getdata_html(void) {
     read_sensors.get_ir_temperature();
     root["IR_TEMP_AMBIENT: "] = values.ir_ambient_temp;
     root["IR_TEMP_OBJECT: "] = values.ir_object_temp;
+#elif defined SENSOR_ULTRASONIC_DISTANCE
+    read_sensors.ReadUltrasonicSensor();
+    root["DISTANCE: "] = values.distanceCm;
 #endif
-    //Store JSON in String variable  
+    //Store JSON in String variabl e  
     serializeJson(root, webpage);
 
     return webpage;
@@ -135,3 +138,4 @@ String buildJsonDocs::build_json_putSettings_html(void) {
 
     return webpage;
     }
+

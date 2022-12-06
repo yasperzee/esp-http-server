@@ -5,6 +5,7 @@
 
 *******************************************************************************/
 /*------------------------------------------------------------------------------
+    Version 0.6     Yasperzee   12'22   Add HC-SRO4 Ultrasonic Distance Sensor  
     Version 0.5     Yasperzee   12'22   Cleaning and refactoring
     Version 0.4     Yasperzee   11'22   IR TEMPERATURE sensor support
     Version 0.3     Yasperzee   11'22   Weather stuff removed
@@ -17,6 +18,8 @@
 #include "eeprom.h"
 #include <EEPROM.h>
 #include <Adafruit_MLX90614.h>
+#include "ESP8266WiFi.h"
+#include <Arduino.h>
 
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 extern localEeprom  eeprom_c;
@@ -33,6 +36,20 @@ float revTime;
 // IR Thermometer stuff
 extern uint8 emissivity_eeprom_address;
 void set_emissivity();
+
+//#ifdef SENSOR_ULTRASONIC_DISTANCE
+  const int trigPin = 12; //D6
+  const int echoPin = 14; // D5
+
+  //define sound velocity in cm/uS
+  #define SOUND_VELOCITY 0.034
+  #define CM_TO_INCH 0.393701
+  long duration;
+  float distanceCm;
+  
+  //Values ReadUltrasonicSensor(); 
+
+//#endif
 
 Values ReadSensors::get_rpm() {
     detachInterrupt(RPM_PIN);
@@ -120,3 +137,34 @@ IRAM_ATTR void isr() {
     //delay(2);  // Some Delay
     //digitalWrite (DEBUG_PIN, HIGH); 
     }
+
+Values ReadSensors::ReadUltrasonicSensor() {
+  Serial.println("\nUltrasonic Sensor HC-SR04");
+  pinMode(trigPin, OUTPUT); 
+  pinMode(echoPin, INPUT); 
+ 
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin on HIGH state for 10 micro seconds
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration = pulseIn(echoPin, HIGH);
+  
+  // Calculate the distance
+  distanceCm = duration * SOUND_VELOCITY/2;
+  values.distanceCm = distanceCm;
+  // Prints the distance on the Serial Monitor
+  // Serial.print("duration: ");
+  // Serial.println(duration);
+  Serial.print("Distance (cm): ");
+  Serial.println(distanceCm);
+  Serial.println();
+  //Serial.print("Distance (inch): ");
+  //Serial.println(distanceInch);
+  
+  // delay(3000);
+  return values;
+  }
