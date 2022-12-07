@@ -36,7 +36,7 @@ ReadSensors read_sensors;
 String buildJsonDocs::build_json_getdata_html(void) {
     String webpage;
     StaticJsonDocument<500> root;
-#ifdef SENSOR_RPM
+#ifdef SENSOR_TACOMETER
     values = read_sensors.get_rpm();
     root["RPM"] = values.rpm;
 #elif defined SENSOR_IR_THERMOMETER
@@ -47,7 +47,7 @@ String buildJsonDocs::build_json_getdata_html(void) {
     read_sensors.ReadUltrasonicSensor();
     root["DISTANCE: "] = values.distanceCm;
 #endif
-    //Store JSON in String variabl e  
+    //Store JSON in String variable  
     serializeJson(root, webpage);
 
     return webpage;
@@ -84,7 +84,7 @@ String buildJsonDocs::build_json_getDebug_html(void) {
     int reboots = eeprom_c.read_eeprom(reboots_eeprom_address);
     //Serial.print("Reboots: ");
     //Serial.println(reboots);
-#ifdef SENSOR_RPM
+#ifdef SENSOR_TACOMETER
     root["Revolutions: "] = rev;
     root["Rev.time: "] = revTime;
 #elif defined SENSOR_IR_THERMOMETER
@@ -104,7 +104,7 @@ String buildJsonDocs::build_json_getSettings_html(void) {
     //root["Settings"] = "GET n/a yet";
     root["Node function "] = NODE_FUNCTION;
     root["Sensor model "] = SENSOR_MODEL_STR;
-#ifdef SENSOR_RPM
+#ifdef SENSOR_TACOMETER
    values.wings= eeprom_c.read_eeprom(wings_eeprom_address);
     root["RPM wings "] = values.wings;
 #elif defined SENSOR_IR_THERMOMETER

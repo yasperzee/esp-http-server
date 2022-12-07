@@ -1,5 +1,5 @@
-tzapu/WiFiManager@^0.16.0
-adafruit/Adafruit MLX90614 Library@^2.1.3
-ArduinoJson
 eeprom
+ArduinoJson
+adafruit/Adafruit MLX90614 Library@^2.1.3
 SPI
+tzapu/WiFiManager@^0.16.0

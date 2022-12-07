@@ -16,7 +16,6 @@
 #include <WiFiManager.h> 
 #include "read_sensors.h"
 
-//extern int wings;
 extern Values values;
 extern void set_callbacks();
 extern void set_emissivity();
@@ -34,7 +33,7 @@ int emissivity_eeprom_length = sizeof(emissivity_eeprom_address); // size of dat
 
 void do_setup() {
 
-#ifdef SENSOR_RPM // Infrared sensor for Tacometer
+#ifdef SENSOR_TACOMETER // Infrared sensor for Tacometer
   pinMode(RPM_PIN, INPUT_PULLUP); 
 #elif defined SENSOR_IR_THERMOMETER 
   //Do something if any...
@@ -100,7 +99,7 @@ Serial.println(emissivity_eeprom_length);
 
   set_callbacks();
 
-#ifdef SENSOR_RPM
+#ifdef SENSOR_TACOMETER
   attachInterrupt(digitalPinToInterrupt(RPM_PIN), isr, FALLING);; 
 #elif defined SENSOR_IR_THERMOMETER
   //Do something if any...

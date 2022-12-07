@@ -100,7 +100,7 @@ Values ReadSensors::get_ir_temperature() {
     return values;
     }
 
-void set_emissivity() {
+void ReadSensors::set_emissivity() {
   //set new emissivity if not same as current one
   Serial.println("\nAdafruit MLX90614 Emissivity Setter.");
   // read current emissivity
@@ -129,14 +129,6 @@ void set_emissivity() {
     Serial.println("DONE. Restart the module.");
     }
   }
-
-//IRAM_ATTR void ReadSensors:: isr() {
-IRAM_ATTR void isr() {
-    rev++;
-    //digitalWrite (DEBUG_PIN, LOW);  
-    //delay(2);  // Some Delay
-    //digitalWrite (DEBUG_PIN, HIGH); 
-    }
 
 Values ReadSensors::ReadUltrasonicSensor() {
   Serial.println("\nUltrasonic Sensor HC-SR04");
@@ -168,3 +160,11 @@ Values ReadSensors::ReadUltrasonicSensor() {
   // delay(3000);
   return values;
   }
+
+  //IRAM_ATTR void ReadSensors:: isr() {
+IRAM_ATTR void isr() {
+    rev++;
+    //digitalWrite (DEBUG_PIN, LOW);  
+    //delay(2);  // Some Delay
+    //digitalWrite (DEBUG_PIN, HIGH); 
+    }

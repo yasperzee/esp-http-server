@@ -15,17 +15,13 @@
 
   ----------------------------------------------------------------------------*/
   #include <Arduino.h>
-  //#include "ESP8266WiFi.h"
-  //#include <ESP8266WebServer.h>  
-
-//void do_setup(void);
 
 //************ Configurations ************
 
   // Select Sensor type
-  //#define SENSOR_RPM
+  #define SENSOR_TACOMETER
   //#define SENSOR_IR_THERMOMETER
-  #define SENSOR_ULTRASONIC_DISTANCE
+  //#define SENSOR_ULTRASONIC_DISTANCE
   
   // Tachometer settings
   #define WINGS 1  // PulsesPerRevolution
@@ -48,7 +44,6 @@
   //#define DEBUG_PIN 0 // e.g. for external LED
   //#define RPM_PIN 5 // D1 in NodeMcu
  
-
   #define BAUDRATE 115200
   #define WIFI_RETRY_TIME 1000
 
