@@ -139,3 +139,8 @@ String buildJsonDocs::build_json_putSettings_html(void) {
     return webpage;
     }
 
+    void switch_light() {
+    //Values ReadSensors::ReadUltrasonicSensor()
+    read_sensors.ReadUltrasonicSensor();
+    }
+

@@ -40,6 +40,10 @@ void set_emissivity();
 //#ifdef SENSOR_ULTRASONIC_DISTANCE
   const int trigPin = 12; //D6
   const int echoPin = 14; // D5
+  const int relayPin= 13; // D7
+  const int minDist = 60; //Cm
+  const int maxDist = 110; //Cm
+  const int lightsOnDelay = 5000; // ms
 
   //define sound velocity in cm/uS
   #define SOUND_VELOCITY 0.034
@@ -134,6 +138,7 @@ Values ReadSensors::ReadUltrasonicSensor() {
   Serial.println("\nUltrasonic Sensor HC-SR04");
   pinMode(trigPin, OUTPUT); 
   pinMode(echoPin, INPUT); 
+  pinMode(relayPin, OUTPUT);
  
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -154,10 +159,13 @@ Values ReadSensors::ReadUltrasonicSensor() {
   Serial.print("Distance (cm): ");
   Serial.println(distanceCm);
   Serial.println();
-  //Serial.print("Distance (inch): ");
-  //Serial.println(distanceInch);
-  
-  // delay(3000);
+
+  if(values.distanceCm >= minDist && values.distanceCm <= maxDist) {
+    digitalWrite(relayPin, LOW);
+    delay(lightsOnDelay);
+    digitalWrite(relayPin, HIGH);
+    }
+
   return values;
   }
 

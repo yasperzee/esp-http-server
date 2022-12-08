@@ -58,14 +58,18 @@ extern void handle_iot_rest_client();
 // Select NODE HTTP ROLE
 //#endif
 
+extern void switch_light();
 extern void do_setup();
+
 
 void setup() {
   do_setup();
   } // setup
 
 void loop() {    
-  handle_iot_rest_client();
+  //handle_iot_rest_client();
+  switch_light();
+  delay(2000);
   } // loop
 
 
