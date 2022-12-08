@@ -48,10 +48,17 @@ References:
     
 #TODO: test OTA
 --------------------------------------------------------------------------------------------*/
-#include "node_handlers.h"
+//#ifdef NODE_HTTP_SERVER
+#include "node_handlers_server.h"
+extern void handle_iot_rest_client();
+//#endif
+//#elseif defined NODE_HTTP_CLIENT
+//#endif
+//#else 
+// Select NODE HTTP ROLE
+//#endif
 
 extern void do_setup();
-extern void handle_iot_rest_client();
 
 void setup() {
   do_setup();

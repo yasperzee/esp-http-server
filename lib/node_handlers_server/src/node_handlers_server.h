@@ -1,12 +1,13 @@
-#ifndef NODE_HANDLERS_H
-#define NODE_HANDLERS_H
+#ifndef NODE_HANDLERS_SERVER_H
+#define NODE_HANDLERS_SERVER_H
 
-/*************************** node_handlers.h ***********************************
+/*************************** node_handlers_server.h ***********************************
  
   Description:  
 
 *******************************************************************************/
 /*------------------------------------------------------------------------------
+  Version 0.2     Yasperzee   12'22     Renamed
   Version 0.1     Yasperzee   12'22     Cleaning and refactoring
  
 ------------------------------------------------------------------------------*/
@@ -25,4 +26,4 @@ void handleNotFoundRest();
 void restServerRoutingRest();
 void handle_iot_rest_client();
 
-#endif // NODE_HANDLERS_H
+#endif // NODE_HANDLERS_SERVER_H

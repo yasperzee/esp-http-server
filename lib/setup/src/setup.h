@@ -19,9 +19,9 @@
 //************ Configurations ************
 
   // Select Sensor type
-  #define SENSOR_TACOMETER
+  //#define SENSOR_TACOMETER
   //#define SENSOR_IR_THERMOMETER
-  //#define SENSOR_ULTRASONIC_DISTANCE
+  #define SENSOR_ULTRASONIC_DISTANCE
   
   // Tachometer settings
   #define WINGS 1  // PulsesPerRevolution
@@ -35,8 +35,8 @@
   #define APP_SW_VERSION "zee_esp_http_0.2.0_dev"
   #define HW_VERSION "zee_esp_tacometer_0.1.0_demo"
   #define NODEMCU_STR "ESP-01s"
-  #define NODE_FUNCTION "Tacometer" // e.g. Tacometer, IR-Thermometer,  Weather, Environment, Handheld, ...
-  #define SENSOR_MODEL_STR "None" // e.g. Olimex SNS-IR-3-8
+  #define NODE_FUNCTION "Ultrasonic-distance" // e.g. Tacometer, IR-Thermometer,  Weather, Environment, Handheld, ...
+  #define SENSOR_MODEL_STR "HC-SR04" // e.g. Olimex SNS-IR-3-8
 
   #define RPM_PIN 2 // ESP-01
   //#define I2C_SCL_PIN 2 //ESP01 

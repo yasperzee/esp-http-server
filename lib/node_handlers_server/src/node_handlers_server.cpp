@@ -1,16 +1,17 @@
-/*************************** node_handlers.h  **********************************
+/*************************** node_handlers_server.h  **********************************
 
   Description:  
 
 *******************************************************************************/
 /*------------------------------------------------------------------------------
+  Version 0.4     Yasperzee   12'22     Renamed
   Version 0.3     Yasperzee   12'22     Initial HTML PUT feature added
   Version 0.2     Yasperzee   12'22     REST endpoins naming changed according to REST naming convention best practices       
   Version 0.1     Yasperzee   12'22     Cleaning and refactoring
  
   #TODO:
 ------------------------------------------------------------------------------*/
-#include "node_handlers.h"
+#include "node_handlers_server.h"
 #include <ESP8266WebServer.h> 
 
 ESP8266WebServer rest_server(HTTP_PORT);
@@ -55,6 +56,8 @@ void handleNotFoundRest() {
   for (uint8_t i = 0; i < rest_server.args(); i++) {
     message += " " + rest_server.argName(i) + ": " + rest_server.arg(i) + "\n";
     }
+  Serial.println("File Not Found: ");
+  Serial.println(message);
   rest_server.send(404, "text/plain", message);
   }
 
