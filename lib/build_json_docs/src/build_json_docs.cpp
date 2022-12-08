@@ -11,13 +11,22 @@
 
 #TODO:
 ------------------------------------------------------------------------------*/
+//#include <Arduino.h>
 #include "ArduinoJson.h"
 #include "build_json_docs.h"
 #include "eeprom.h"
 #include "read_sensors.h"
 #include "ESP8266WiFi.h"
 #include "setup.h"
-//#include "read_sensors.h"
+
+
+/*
+
+#include <EEPROM.h>
+#include <Adafruit_MLX90614.h>
+
+
+*/
 
 
 extern int reboots_eeprom_address; // EEPROM address to save reboots
@@ -28,6 +37,11 @@ extern float revTime;
 //extern int wings;
 extern int new_emissivity;
 extern Values values;
+
+const int relayPin= 13; // D7
+const int minDist = 60; //Cm
+const int maxDist = 120; //Cm
+const int lightsOnDelay = 5000; // ms
 
 extern localEeprom  eeprom_c;
 
@@ -139,8 +153,18 @@ String buildJsonDocs::build_json_putSettings_html(void) {
     return webpage;
     }
 
-    void switch_light() {
-    //Values ReadSensors::ReadUltrasonicSensor()
+void switch_light() {
+    pinMode(relayPin, OUTPUT);
+    //read_sensors.ReadUltrasonicSensor();
+    Serial.print("switch_light?  ");
+while(true) {
     read_sensors.ReadUltrasonicSensor();
+    if(values.distanceCm >= minDist && values.distanceCm <= maxDist) {
+        Serial.println("YES!");
+        digitalWrite(relayPin, LOW);
+        delay(lightsOnDelay);
+        digitalWrite(relayPin, HIGH);
+        }
     }
+}
 

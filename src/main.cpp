@@ -61,7 +61,6 @@ extern void handle_iot_rest_client();
 extern void switch_light();
 extern void do_setup();
 
-
 void setup() {
   do_setup();
   } // setup
@@ -69,7 +68,7 @@ void setup() {
 void loop() {    
   //handle_iot_rest_client();
   switch_light();
-  delay(2000);
+  //delay(500);
   } // loop
 
 
