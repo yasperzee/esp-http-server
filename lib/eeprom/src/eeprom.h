@@ -14,6 +14,8 @@
 #include "setup.h"
 //#include <EEPROM.h>
 
+#define EEPROM_SIZE 512
+
 class localEeprom {
   public:
   void write_eeprom( int addr, int value);

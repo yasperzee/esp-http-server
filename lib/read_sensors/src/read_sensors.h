@@ -23,47 +23,55 @@
 // constants
 const int ERROR_VALUE = -999.99;
 
+#define RPM_PIN 2 // ESP-01
+//#define RPM_PIN 5 // D1 on NodeMcu
+
+  //#define I2C_SCL_PIN 2 //ESP01 
+  //#define I2C_SDA_PIN 0 //ESP01 
+  #define I2C_SCL_PIN D1 //Lolin 
+  #define I2C_SDA_PIN D2 // Lolin
+  //#define DEBUG_PIN 0 // e.g. for external LED
+
 // values for sensor readings
 struct Values {
-    double temperature  = ERROR_VALUE;
-    double humidity     = ERROR_VALUE;
-    double pressure     = ERROR_VALUE;
-    double altitude     = ERROR_VALUE;
-    double als          = ERROR_VALUE;
-    double vcc_batt     = ERROR_VALUE;
-    
+    double temperature    = ERROR_VALUE;
+    double humidity       = ERROR_VALUE;
+    double pressure       = ERROR_VALUE;
+    double altitude       = ERROR_VALUE;
+    double als            = ERROR_VALUE;
+    double vcc_batt       = ERROR_VALUE;
     double rpm            = ERROR_VALUE;
     int wings             = 1;
-
     double emissivity     = EMISSIVITY;
     double ir_object_temp = ERROR_VALUE;
     double ir_ambient_temp= ERROR_VALUE;
-
     double distanceCm     = ERROR_VALUE;
-    int fail_count =0;
+    int fail_count        = 0;
     };
-
-
-
-
-
 
 class ReadSensors {
   public:
+  //#if defined SENSOR_TACOMETER
     Values get_rpm(void);
-    Values get_ir_temperature();
     // IRAM_ATTR void isr();
+  //#endif  
+  //#if defined SENSOR_IR_THERMOMETER
+    Values get_ir_temperature();
     void set_emissivity();
+  //#endif
+  //if defined SENSOR_ULTRASONIC_DISTANCE
     Values ReadUltrasonicSensor(); 
+  //#endif
   #if defined(SENSOR_DHT11) || defined(SENSOR_DHT22)
     Values read_dhtXXX(void);
   #endif
-  #if defined(SENSOR_BMP280)
+  #if defined SENSOR_BMP280
     Values read_bmp280();
   #endif
   #if defined SENSOR_BME280
     Values read_bme280();
   #endif
+  
    private:
 };
 

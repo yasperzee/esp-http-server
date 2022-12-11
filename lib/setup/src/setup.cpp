@@ -16,6 +16,8 @@
 #include <WiFiManager.h> 
 #include "read_sensors.h"
 
+
+
 extern Values values;
 extern void set_callbacks();
 extern void set_emissivity();

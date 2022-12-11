@@ -17,6 +17,7 @@
 #include <Wire.h>
 #include <DHT.h>
 
+
 // max retry to read sensor before reboot
 #define MAX_RETRYCOUNT 50
 

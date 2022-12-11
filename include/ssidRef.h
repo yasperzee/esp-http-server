@@ -11,7 +11,7 @@
   *****************************************************************************/
  
 /*------------------------------------------------------------------------------
-  Version 0.1	  Yasperzee 11'2022   WifiManager taken in use so this is obsolite
+  Version 0.1	  Yasperzee 11'2022   WifiManager taken in use so this is obsolete
   Version 0.		Yasperzee    2019   ssid & password moved to ssid.h
   ----------------------------------------------------------------------------*/
 

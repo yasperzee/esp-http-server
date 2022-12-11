@@ -32,7 +32,6 @@ References:
 *******************************************************************************/
 /*------------------------------------------------------------------------------    
   Version 1.5     12'22     Yasperzee     Add DHT Sensor support
-
   Version 1.4     12'22     Yasperzee     Renamed to main.cpp
   Version 1.3     12'22     Yasperzee     Cleaning and refactoring
   Version 1.2     12'22     Yasperzee     IR Thermometer support added
@@ -59,8 +58,8 @@ extern void handle_iot_rest_client();
 //#else 
 // Select NODE HTTP ROLE
 //#endif
-extern void read_dht_sensor();
-extern void switch_light();
+//extern void read_dht_sensor();
+//extern void switch_light();
 extern void do_setup();
 
 void setup() {

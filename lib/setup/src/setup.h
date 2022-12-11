@@ -42,13 +42,9 @@
   #define NODE_FUNCTION "Temp&Humid" // e.g. Ultrasonic-distance, Tacometer, IR-Thermometer,  Weather, Environment, Handheld, ...
   #define SENSOR_MODEL_STR "DHT22" // e.g. Olimex SNS-IR-3-8
 
-  #define RPM_PIN 2 // ESP-01
-  //#define I2C_SCL_PIN 2 //ESP01 
-  //#define I2C_SDA_PIN 0 //ESP01 
-  #define I2C_SCL_PIN D1 //Lolin 
-  #define I2C_SDA_PIN D2 // Lolin
-  //#define DEBUG_PIN 0 // e.g. for external LED
-  //#define RPM_PIN 5 // D1 in NodeMcu
+  
+ 
+  
 
   //#define BMP280_ADDR BMP280_ADDRESS //(0x77) SDO = HIGH
 #define BMP280_ADDR BMP280_ADDRESS_ALT  //(0x76) SDO = LOW
@@ -57,10 +53,8 @@
  
   #define BAUDRATE 115200
   #define WIFI_RETRY_TIME 1000
-
+  
   #define HTTP_PORT 80
   #define HTTP_REST_PORT 8080
-
-  #define EEPROM_SIZE 512
 
 #endif //SETUP_H

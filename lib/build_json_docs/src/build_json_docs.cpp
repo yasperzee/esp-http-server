@@ -20,16 +20,6 @@
 #include "ESP8266WiFi.h"
 #include "setup.h"
 
-
-/*
-
-#include <EEPROM.h>
-#include <Adafruit_MLX90614.h>
-
-
-*/
-
-
 extern int reboots_eeprom_address; // EEPROM address to save reboots
 extern uint8 wings_eeprom_address;
 
@@ -169,19 +159,6 @@ String buildJsonDocs::build_json_putSettings_html(void) {
     return webpage;
     }
 
-void switch_light() {
-    pinMode(relayPin, OUTPUT);
-    Serial.print("switch_light?  ");
-while(true) {
-    read_sensors.ReadUltrasonicSensor();
-    if(values.distanceCm >= minDist && values.distanceCm <= maxDist) {
-        Serial.println("YES!");
-        digitalWrite(relayPin, LOW);
-        delay(lightsOnDelay);
-        digitalWrite(relayPin, HIGH);
-        }
-    }
-}
 #ifdef SENSOR_DHT22
 void read_dht_sensor() {
     Serial.print("read_dht_sensor  ");
@@ -208,3 +185,18 @@ void read_bmp280() {
 
     }
 #endif
+
+// Standalone, so stays here forever, no Web/Wifi activated, on ESP-01 Rx(gpio1) is used for relay as  Ultrasonic sensor reserve gpio0 and gpio2 for i2c
+void switch_light() {
+    pinMode(relayPin, OUTPUT);
+    Serial.print("switch_light?  ");
+while(true) {
+    read_sensors.ReadUltrasonicSensor();
+    if(values.distanceCm >= minDist && values.distanceCm <= maxDist) {
+        Serial.println("YES!");
+        digitalWrite(relayPin, LOW);
+        delay(lightsOnDelay);
+        digitalWrite(relayPin, HIGH);
+        }
+    }
+}

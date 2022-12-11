@@ -53,11 +53,8 @@ void set_emissivity();
   #define CM_TO_INCH 0.393701
   long duration;
   float distanceCm;
-  
-  //Values ReadUltrasonicSensor(); 
-
 //#endif
-
+ //#if defined SENSOR_TACOMETER
 Values ReadSensors::get_rpm() {
     detachInterrupt(RPM_PIN);
     newtime=millis()-oldtime; //finds the time 
@@ -84,7 +81,8 @@ Values ReadSensors::get_rpm() {
 
     return values;
     }
-
+//#endif
+ //#if defined SENSOR_IR_THERMOMETER
 Values ReadSensors::get_ir_temperature() {
     // init ir_temp sensor
     if (!mlx.begin()) {
@@ -136,7 +134,9 @@ void ReadSensors::set_emissivity() {
     Serial.println("DONE. Restart the module.");
     }
   }
+//#endif // SENSOR_IR_THERMOMETER
 
+//if defined SENSOR_ULTRASONIC_DISTANCE
 Values ReadSensors::ReadUltrasonicSensor() {
   Serial.println("\nUltrasonic Sensor HC-SR04");
   pinMode(trigPin, OUTPUT); 
@@ -171,6 +171,7 @@ Values ReadSensors::ReadUltrasonicSensor() {
 */
   return values;
   }
+//#endif
 
 #ifdef SENSOR_BMP280
 Values ReadSensors::read_bmp280()
