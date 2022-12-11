@@ -5,6 +5,7 @@
 
 *******************************************************************************/
 /*------------------------------------------------------------------------------
+    Version 0.7     Yasperzee   12'22   Add BMP280 & BME280 Sensors
     Version 0.6     Yasperzee   12'22   Add HC-SRO4 Ultrasonic Distance Sensor  
     Version 0.5     Yasperzee   12'22   Cleaning and refactoring
     Version 0.4     Yasperzee   11'22   IR TEMPERATURE sensor support
@@ -14,12 +15,18 @@
 
 #TODO:
 ------------------------------------------------------------------------------*/
+#if defined(SENSOR_DHT11) || defined(SENSOR_DHT22)
+#include <read_DHT_sensors.h>
+#endif
+
 #include "read_sensors.h"
 #include "eeprom.h"
 #include <EEPROM.h>
 #include <Adafruit_MLX90614.h>
 #include "ESP8266WiFi.h"
 #include <Arduino.h>
+#include <Adafruit_BMP280.h>
+#include <Adafruit_BME280.h>
 
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 extern localEeprom  eeprom_c;
@@ -164,6 +171,108 @@ Values ReadSensors::ReadUltrasonicSensor() {
 */
   return values;
   }
+
+#ifdef SENSOR_BMP280
+Values ReadSensors::read_bmp280()
+    {
+    //char bmp280_status;
+    //Values values;
+
+    Adafruit_BMP280 bmp280;
+
+    Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
+
+    if (!bmp280.begin(BMP280_ADDR, BMP280_CHIPID))
+        {// continue anyway but show valeus as "-999.99" (ERROR_VALUE)
+        Serial.println("BMP280 init FAIL!!");
+        values.temperature = ERROR_VALUE;
+        values.pressure = ERROR_VALUE;
+        values.altitude = ERROR_VALUE;
+        values.fail_count ++;
+        }
+    else
+        {
+        values.temperature = bmp280.readTemperature();
+        values.pressure = (bmp280.readPressure()/100); // mBar
+        values.altitude = bmp280.readAltitude(1013.25);
+        //values.altitude = bmp280.readAltitude();
+        #ifdef TRACE_INFO
+        Serial.print("BMP280: Temperature: ");
+        Serial.println(values.temperature);
+        Serial.print("BMP280: Pressure   : ");
+        Serial.println(values.pressure);
+        Serial.print("BMP280: Altitude   : ");
+        Serial.println(values.altitude);
+        #endif
+        #ifdef NODE_FEATURE_AMBIENT_LIGHT
+            pinMode(ALS_PIN, INPUT);
+            values.als = analogRead(ALS_PIN); //Read light levelM
+            //float reading = analogRead(ALS_PIN); //Read light level
+            //float square_ratio = reading / 1023.0; //Get percent of maximum value (1023)
+            //square_ratio = pow(square_ratio, 2.0);
+            //values.als = reading;
+        #endif
+        #ifdef TRACE_INFO
+        Serial.print("temt6000: ");
+        Serial.print(values.als);
+        Serial.print("\n");
+        #endif
+        }
+    return values;
+    } //read_bmp280
+#endif
+
+#ifdef SENSOR_BME280
+Values ReadSensors::read_bme280()
+    {
+    //BME280_ADDRESS                (0x77)
+    //BME280_ADDRESS_ALTERNATE      (0x76)
+
+    Adafruit_BME280 bme280;
+    Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
+    //Wire.setClock(100000);
+
+    if(!bme280.begin(BME280_ADDRESS))
+        {// continue anyway but show valeus as "-999.99" (ERROR_VALUE)
+        Serial.println("BME280 init FAIL!!");
+        values.temperature  = ERROR_VALUE;
+        values.pressure     = ERROR_VALUE;
+        values.altitude     = ERROR_VALUE;
+        values.humidity     = ERROR_VALUE;
+        values.fail_count ++;
+        }
+    else
+        {
+        values.temperature = bme280.readTemperature();
+        values.humidity = bme280.readHumidity();
+        values.pressure = bme280.readPressure();
+        //values.altitude = bme280.readAltitude();
+        #ifdef TRACE_INFO
+        Serial.print("BME280: Temperature: ");
+        Serial.println(values.temperature);
+        Serial.print("BME280: Humidity: ");
+        Serial.println(values.humidity);
+        Serial.print("BME280: Pressure: ");
+        Serial.println(values.pressure);
+        Serial.print("BME280: Altitude: ");
+        Serial.println(values.altitude);
+        #endif
+
+        #ifdef NODE_FEATURE_AMBIENT_LIGHT
+            pinMode(ALS_PIN, INPUT);
+            float reading = analogRead(ALS_PIN); //Read light level
+            //float square_ratio = reading / 1023.0; //Get percent of maximum value (1023)
+            //square_ratio = pow(square_ratio, 2.0);
+            values.als = reading;
+          #ifdef TRACE_INFO
+            Serial.print("ALS: ");
+            Serial.println(values.als);
+          #endif
+        #endif
+        }
+    return values;
+} //read_bme280
+#endif
 
   //IRAM_ATTR void ReadSensors:: isr() {
 IRAM_ATTR void isr() {

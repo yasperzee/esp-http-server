@@ -4,6 +4,7 @@
 
 *******************************************************************************/
 /* -----------------------------------------------------------------------------
+    Version 0.7     Yasperzee   12'22   Add BMP280 & BME280 Sensors
     Version 0.4     Yasperzee   12'22   Add HC-SRO4 Ultrasonic Distance Sensor 
     Version 0.3     Yasperzee   12'22   Cleaning and refactoring
     Version 0.2     Yasperzee   11'22   IR Thermometer sensor support
@@ -60,6 +61,21 @@ String buildJsonDocs::build_json_getdata_html(void) {
 #elif defined SENSOR_ULTRASONIC_DISTANCE
     read_sensors.ReadUltrasonicSensor();
     root["DISTANCE: "] = values.distanceCm;
+#elif defined SENSOR_DHT22
+    read_sensors.read_dhtXXX();
+    root["DHT_T: "] = values.temperature;
+    root["DHT_H: "] = values.humidity;
+ #elif defined SENSOR_BMP280
+    read_sensors.read_bmp280();
+    root["BMP280_T: "] = values.temperature;
+    root["BMP280_P: "] = values.pressure;
+    root["BMP280_A: "] = values.altitude;
+#elif defined SENSOR_BME280
+    read_sensors.read_bme280();
+    root["BME280_T: "] = values.temperature;
+    root["BME280_H: "] = values.humidity;
+    root["BME280_P: "] = values.pressure;
+    root["BME280_A: "] = values.altitude;
 #endif
     //Store JSON in String variable  
     serializeJson(root, webpage);
@@ -155,7 +171,6 @@ String buildJsonDocs::build_json_putSettings_html(void) {
 
 void switch_light() {
     pinMode(relayPin, OUTPUT);
-    //read_sensors.ReadUltrasonicSensor();
     Serial.print("switch_light?  ");
 while(true) {
     read_sensors.ReadUltrasonicSensor();
@@ -167,4 +182,29 @@ while(true) {
         }
     }
 }
+#ifdef SENSOR_DHT22
+void read_dht_sensor() {
+    Serial.print("read_dht_sensor  ");
+while(true) {
+    read_sensors.read_dhtXXX();
+  
+    Serial.print("DHT_T: ");
+    Serial.println(values.temperature);
+    Serial.print("DHT_H: ");
+    Serial.println(values.humidity);
+        }
+    }
+#endif
 
+#ifdef SENSOR_BMP280
+void read_bmp280() {
+    Serial.print("read_BMP280_sensor  ");
+    read_sensors.read_bmp280();
+
+    Serial.print("BMP280_T: ");
+    Serial.println(values.temperature);
+    Serial.print("BMP280_P: ");
+    Serial.println(values.pressure);
+
+    }
+#endif
