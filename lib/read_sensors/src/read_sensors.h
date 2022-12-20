@@ -7,7 +7,7 @@
   
 *******************************************************************************/
 /*------------------------------------------------------------------------------
-  Version 0.7     Yasperzee   12'22     Add BMP280 & BME280 Sensors
+  Version 0.7     Yasperzee   12'22     Add SHT3x Sensors
   Version 0.6     Yasperzee   12'22     Add HC-SRO4 Ultrasonic Distance Sensor  
   Version 0.5     Yasperzee   12'22     Cleaning and refactoring
   Version 0.4     Yasperzee   11'22     IR TEMPERATURE sensor support
@@ -23,8 +23,12 @@
 // constants
 const int ERROR_VALUE = -999.99;
 
-#define RPM_PIN 2 // ESP-01
-//#define RPM_PIN 5 // D1 on NodeMcu
+
+#if defined SENSOR_TACOMETER // Tachometer settings
+  #define WINGS 1  // PulsesPerRevolution
+  #define RPM_PIN 2 // ESP-01
+  //#define RPM_PIN 5 // D1 on NodeMcu
+#endif
 
   //#define I2C_SCL_PIN 2 //ESP01 
   //#define I2C_SDA_PIN 0 //ESP01 
@@ -51,17 +55,17 @@ struct Values {
 
 class ReadSensors {
   public:
-  //#if defined SENSOR_TACOMETER
+  #if defined SENSOR_TACOMETER
     Values get_rpm(void);
     // IRAM_ATTR void isr();
-  //#endif  
-  //#if defined SENSOR_IR_THERMOMETER
+  #endif  
+  #if defined SENSOR_IR_THERMOMETER
     Values get_ir_temperature();
     void set_emissivity();
-  //#endif
-  //if defined SENSOR_ULTRASONIC_DISTANCE
+  #endif
+  #if defined SENSOR_ULTRASONIC_DISTANCE
     Values ReadUltrasonicSensor(); 
-  //#endif
+  #endif
   #if defined(SENSOR_DHT11) || defined(SENSOR_DHT22)
     Values read_dhtXXX(void);
   #endif
@@ -70,6 +74,9 @@ class ReadSensors {
   #endif
   #if defined SENSOR_BME280
     Values read_bme280();
+  #endif
+    #if defined SENSOR_SHT3X
+    Values read_sht3x();
   #endif
   
    private:

@@ -4,9 +4,11 @@
 /*************************** setup.h *******************************************
 
   Description:  Node setup
+  defined 
 
 *******************************************************************************/
 /*------------------------------------------------------------------------------
+  Version 0.7     Yasperzee   12'22          Add SHT3X Sensors
   Version 0.6     Yasperzee   12'22          Add BMP280 & BME280 Sensors
   Version 0.5     Yasperzee   12'22          Add HC-SRO4 Ultrasonic Distance Sensor     
   Version 0.4     Yasperzee   12'22          Cleaning and refactoring
@@ -18,17 +20,24 @@
   #include <Arduino.h>
 
 //************ Configurations ************
- #define TRACE_INFO
-  // Select Sensor type
- #define SENSOR_BME280
-  //#define SENSOR_BMP280
+
+#define TRACE_INFO
+
+// Define node role
+  #define NODE_HTTP_SERVER
+  //#define NODE_HTTP_CLIENT
+  //#define NODE_STANDALONE
+
+// Select Sensor type
+  //#define SENSOR_BME280
+  #define SENSOR_BMP280
   //#define SENSOR_DHT22
+  //#define defined SENSOR_SH3X
   //#define SENSOR_TACOMETER
   //#define SENSOR_IR_THERMOMETER
   //#define SENSOR_ULTRASONIC_DISTANCE
   
-  // Tachometer settings
-  #define WINGS 1  // PulsesPerRevolution
+
 
    // IR Thermometer settings
   #define EMISSIVITY 1.00  
@@ -39,8 +48,8 @@
   #define APP_SW_VERSION "zee_esp_http_0.2.0_dev"
   #define HW_VERSION "zee_esp_tacometer_0.1.0_demo"
   #define NODEMCU_STR "ESP-01s"
-  #define NODE_FUNCTION "Temp&Humid" // e.g. Ultrasonic-distance, Tacometer, IR-Thermometer,  Weather, Environment, Handheld, ...
-  #define SENSOR_MODEL_STR "DHT22" // e.g. Olimex SNS-IR-3-8
+  #define NODE_FUNCTION "Weather" // e.g. Ultrasonic-distance, Tacometer, IR-Thermometer,  Weather, Environment, Handheld, ...
+  #define SENSOR_MODEL_STR "BMP280" // e.g. Olimex SNS-IR-3-8
 
   
  

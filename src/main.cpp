@@ -49,28 +49,58 @@ References:
     
 #TODO: test OTA
 --------------------------------------------------------------------------------------------*/
-//#ifdef NODE_HTTP_SERVER
-#include "node_handlers_server.h"
-extern void handle_iot_rest_client();
-//#endif
-//#elseif defined NODE_HTTP_CLIENT
-//#endif
-//#else 
-// Select NODE HTTP ROLE
-//#endif
-//extern void read_dht_sensor();
-//extern void switch_light();
+#include "setup.h"
+
+#include <Arduino.h>
+#include <Wire.h>
+#include "Adafruit_SHT31.h"
+
+
+Adafruit_SHT31 sht31 = Adafruit_SHT31();
+
+
 extern void do_setup();
 
+#ifdef NODE_HTTP_SERVER
+#include "node_handlers_server.h"
+extern void handle_iot_rest_remote_client();
+#elif defined NODE_HTTP_CLIENT
+// I AM the REST CLIENT !
+#elif defined NODE_STANDALONE
+// No WiFi
+#endif
+
 void setup() {
-  do_setup();
+  //do_setup();
+  
+// put your setup code here, to run once:
+
+  //Wire.begin();
+  Serial.begin(115200);
+ Serial.println("\nHST31 test");
+  if (! sht31.begin(0x44)) {   //Set to 0x45 for alternate i2c addr
+    Serial.println("Couldn't find SHT31");
+  }
+  delay(1000); 
   } // setup
 
 void loop() {    
-  handle_iot_rest_client();
-  //switch_light();
-  //read_dht_sensor();
-  //delay(5000);
+    float t = sht31.readTemperature();
+  float h = sht31.readHumidity();
+
+  if (! isnan(t)) {  // check if 'is not a number'
+    Serial.print("Temp *C = "); Serial.print(t); Serial.print("\t\t");
+  } else { 
+    Serial.println("Failed to read temperature");
+  }
+  
+  if (! isnan(h)) {  // check if 'is not a number'
+    Serial.print("Hum. % = "); Serial.println(h);
+  } else { 
+    Serial.println("Failed to read humidity");
+  }
+    delay(2000); 
+
   } // loop
 
     

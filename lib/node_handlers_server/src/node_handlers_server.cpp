@@ -70,7 +70,7 @@ void restServerRoutingRest() {
     });  
   }
 
-  void handle_iot_rest_client() {
+  void handle_iot_rest_remote_client() {
     rest_server.handleClient();
   }
 

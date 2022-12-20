@@ -16,8 +16,6 @@
 #include <WiFiManager.h> 
 #include "read_sensors.h"
 
-
-
 extern Values values;
 extern void set_callbacks();
 extern void set_emissivity();
@@ -35,18 +33,23 @@ int emissivity_eeprom_length = sizeof(emissivity_eeprom_address); // size of dat
 
 void do_setup() {
 
+  Serial.begin(BAUDRATE);
+  EEPROM.begin(EEPROM_SIZE);
+  //clear_eeprom(); 
+
 #ifdef SENSOR_TACOMETER // Infrared sensor for Tacometer
   pinMode(RPM_PIN, INPUT_PULLUP); 
+  // Write PPR (PulsesPerRevolution) for Tachometer to EEPROM
+  //eeprom_c.write_eeprom(wings_eeprom_address, WINGS);
+  values.wings = WINGS;
 #elif defined SENSOR_IR_THERMOMETER 
   //Do something if any...
 #elif defined SENSOR_ULTRASONIC_DISTANCE
   //Do something if any...
 #endif
   
-  Serial.begin(BAUDRATE);
-  EEPROM.begin(EEPROM_SIZE);
-  //clear_eeprom();
-
+  
+/*
 Serial.print("reboots_eeprom_address: ");
 Serial.println(reboots_eeprom_address);
 Serial.print("reboots_eeprom_length: ");
@@ -61,20 +64,13 @@ Serial.print("emissivity_eeprom_address: ");
 Serial.println(emissivity_eeprom_address);
 Serial.print("emissivity_eeprom_length: ");
 Serial.println(emissivity_eeprom_length);
-
+*/
   // read reboots count from EEPROM, increment and write back
   int reboots = eeprom_c.read_eeprom(reboots_eeprom_address);
   reboots++;
   eeprom_c.write_eeprom(reboots_eeprom_address, reboots);
 
-  // Write PPR (PulsesPerRevolution) ro Tachometer to EEPROM
-  //eeprom_c.write_eeprom(wings_eeprom_address, WINGS);
-  values.wings = WINGS;
-
-  //set new emissivity for IR Thermometer if not same as current one
-  //set_emissivity( );
-
-  // WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
+  WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
   // it is a good practice to make sure your code sets wifi mode how you want it.
   WiFiManager wifiManager;
 
@@ -105,7 +101,7 @@ Serial.println(emissivity_eeprom_length);
   attachInterrupt(digitalPinToInterrupt(RPM_PIN), isr, FALLING);; 
 #elif defined SENSOR_IR_THERMOMETER
   //Do something if any...
-  #elif defined SENSOR_ULTRASONIC_DISTANCE
+#elif defined SENSOR_ULTRASONIC_DISTANCE
   //Do something if any..
 #endif
 

@@ -24,6 +24,6 @@ void getNodeSettings();
 void putNodeSettings();
 void handleNotFoundRest();
 void restServerRoutingRest();
-void handle_iot_rest_client();
+void handle_iot_rest_reomote_client();
 
 #endif // NODE_HANDLERS_SERVER_H

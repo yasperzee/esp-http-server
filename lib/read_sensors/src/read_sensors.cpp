@@ -5,6 +5,7 @@
 
 *******************************************************************************/
 /*------------------------------------------------------------------------------
+    Version 0.7     Yasperzee   12'22     Add SHT3x Sensors
     Version 0.7     Yasperzee   12'22   Add BMP280 & BME280 Sensors
     Version 0.6     Yasperzee   12'22   Add HC-SRO4 Ultrasonic Distance Sensor  
     Version 0.5     Yasperzee   12'22   Cleaning and refactoring
@@ -22,39 +23,47 @@
 #include "read_sensors.h"
 #include "eeprom.h"
 #include <EEPROM.h>
-#include <Adafruit_MLX90614.h>
 #include "ESP8266WiFi.h"
 #include <Arduino.h>
+#ifdef SENSOR_IR_THERMOMETER
+#include <Adafruit_MLX90614.h>
+#endif
+#ifdef SENSOR_BMP280
 #include <Adafruit_BMP280.h>
+#endif
+#ifdef SENSOR_BME280
 #include <Adafruit_BME280.h>
+#endif
 
-Adafruit_MLX90614 mlx = Adafruit_MLX90614();
+#define SEALEVELPRESSURE_HPA (1013.25) //for Altitude
 extern localEeprom  eeprom_c;
 Values values;
 
-// RPM stuff
-extern uint8 wings_eeprom_address;
-float rev;
-float rpm;
-int   oldtime;
-int   newtime;
-float revTime;
+#ifdef SENSOR_TACOMETER// RPM stuff
+  extern uint8 wings_eeprom_address;
+  float rev;
+  float rpm;
+  int   oldtime;
+  int   newtime;
+  float revTime;
+#endif
 
-// IR Thermometer stuff
-extern uint8 emissivity_eeprom_address;
-void set_emissivity();
+#ifdef SENSOR_IR_THERMOMETER
+  // IR Thermometer stuff
+  extern uint8 emissivity_eeprom_address;
+  void set_emissivity();
+#endif
 
-//#ifdef SENSOR_ULTRASONIC_DISTANCE
+#ifdef SENSOR_ULTRASONIC_DISTANCE
   const int trigPin = 12; //D6
   const int echoPin = 14; // D5
-
   //define sound velocity in cm/uS
   #define SOUND_VELOCITY 0.034
   #define CM_TO_INCH 0.393701
   long duration;
   float distanceCm;
-//#endif
- //#if defined SENSOR_TACOMETER
+#endif
+#if defined SENSOR_TACOMETER
 Values ReadSensors::get_rpm() {
     detachInterrupt(RPM_PIN);
     newtime=millis()-oldtime; //finds the time 
@@ -81,9 +90,12 @@ Values ReadSensors::get_rpm() {
 
     return values;
     }
-//#endif
- //#if defined SENSOR_IR_THERMOMETER
+#endif
+#if defined SENSOR_IR_THERMOMETER
 Values ReadSensors::get_ir_temperature() {
+
+    Adafruit_MLX90614 mlx = Adafruit_MLX90614();
+
     // init ir_temp sensor
     if (!mlx.begin()) {
         Serial.println("Error connecting to MLX sensor. Check wiring.");
@@ -134,9 +146,9 @@ void ReadSensors::set_emissivity() {
     Serial.println("DONE. Restart the module.");
     }
   }
-//#endif // SENSOR_IR_THERMOMETER
+#endif // SENSOR_IR_THERMOMETER
 
-//if defined SENSOR_ULTRASONIC_DISTANCE
+#if defined SENSOR_ULTRASONIC_DISTANCE
 Values ReadSensors::ReadUltrasonicSensor() {
   Serial.println("\nUltrasonic Sensor HC-SR04");
   pinMode(trigPin, OUTPUT); 
@@ -171,13 +183,11 @@ Values ReadSensors::ReadUltrasonicSensor() {
 */
   return values;
   }
-//#endif
+#endif
 
 #ifdef SENSOR_BMP280
 Values ReadSensors::read_bmp280()
     {
-    //char bmp280_status;
-    //Values values;
 
     Adafruit_BMP280 bmp280;
 
@@ -193,10 +203,15 @@ Values ReadSensors::read_bmp280()
         }
     else
         {
-        values.temperature = bmp280.readTemperature();
-        values.pressure = (bmp280.readPressure()/100); // mBar
-        values.altitude = bmp280.readAltitude(1013.25);
-        //values.altitude = bmp280.readAltitude();
+        values.temperature  = (int)(bmp280.readTemperature() * 100 + .5); 
+        values.temperature = values.temperature /100; // 2 decimals
+
+        values.pressure = (int)(bmp280.readPressure()/100 * 100 + .5);
+        values.pressure = values.pressure / 100; // 2 decimals
+
+        values.altitude = (int)(bmp280.readAltitude(SEALEVELPRESSURE_HPA)* 100 + .5);
+        values.altitude =  values.altitude / 100; // 2 decimals
+
         #ifdef TRACE_INFO
         Serial.print("BMP280: Temperature: ");
         Serial.println(values.temperature);
@@ -212,11 +227,11 @@ Values ReadSensors::read_bmp280()
             //float square_ratio = reading / 1023.0; //Get percent of maximum value (1023)
             //square_ratio = pow(square_ratio, 2.0);
             //values.als = reading;
-        #endif
-        #ifdef TRACE_INFO
-        Serial.print("temt6000: ");
-        Serial.print(values.als);
-        Serial.print("\n");
+          #ifdef TRACE_INFO
+          Serial.print("temt6000: ");
+          Serial.print(values.als);
+          Serial.print("\n");
+          #endif
         #endif
         }
     return values;
@@ -229,25 +244,36 @@ Values ReadSensors::read_bme280()
     //BME280_ADDRESS                (0x77)
     //BME280_ADDRESS_ALTERNATE      (0x76)
 
+    //double tmp_value;
+
     Adafruit_BME280 bme280;
     Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
     //Wire.setClock(100000);
 
-    if(!bme280.begin(BME280_ADDRESS))
+    if(!bme280.begin(BME280_ADDRESS_ALTERNATE))
         {// continue anyway but show valeus as "-999.99" (ERROR_VALUE)
         Serial.println("BME280 init FAIL!!");
         values.temperature  = ERROR_VALUE;
+        values.humidity     = ERROR_VALUE;
         values.pressure     = ERROR_VALUE;
         values.altitude     = ERROR_VALUE;
-        values.humidity     = ERROR_VALUE;
+
         values.fail_count ++;
         }
     else
         {
-        values.temperature = bme280.readTemperature();
-        values.humidity = bme280.readHumidity();
-        values.pressure = bme280.readPressure();
-        //values.altitude = bme280.readAltitude();
+        values.temperature  = (int)(bme280.readTemperature() * 100 + .5); 
+        values.temperature = values.temperature /100; // 2 decimals
+
+        values.humidity = (int)( bme280.readHumidity() * 100 + .5);
+        values.humidity = values.humidity / 100; // 2 decimals
+        
+        values.pressure = (int)(bme280.readPressure()/100 * 100 + .5);
+        values.pressure = values.pressure / 100; // 2 decimals
+
+        values.altitude = (int)(bme280.readAltitude(SEALEVELPRESSURE_HPA)* 100 + .5);
+        values.altitude =  values.altitude / 100; // 2 decimals
+
         #ifdef TRACE_INFO
         Serial.print("BME280: Temperature: ");
         Serial.println(values.temperature);
@@ -275,6 +301,7 @@ Values ReadSensors::read_bme280()
 } //read_bme280
 #endif
 
+#if defined SENSOR_TACOMETER
   //IRAM_ATTR void ReadSensors:: isr() {
 IRAM_ATTR void isr() {
     rev++;
@@ -282,3 +309,27 @@ IRAM_ATTR void isr() {
     //delay(2);  // Some Delay
     //digitalWrite (DEBUG_PIN, HIGH); 
     }
+#endif
+
+#if defined SENSOR_SHT3X
+ Values ReadSensors::read_bme280()
+ {
+  values.temperature = sht31.readTemperature();
+  values.humidity = sht31.readHumidity();
+
+  if (! isnan(t)) {  // check if 'is not a number'
+    Serial.print("Temp *C = "); Serial.print(values.temperature); Serial.print("\t\t");
+  } else { 
+    values.temperature  = ERROR_VALUE;
+    Serial.println("Failed to read temperature");
+  }
+  
+  if (! isnan(h)) {  // check if 'is not a number'
+    Serial.print("Hum. % = "); Serial.println(values.humidity);
+  } else { 
+    values.humidity     = ERROR_VALUE;
+    Serial.println("Failed to read humidity");
+  }
+   return values;
+ }
+#endif

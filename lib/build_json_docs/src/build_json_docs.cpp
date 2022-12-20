@@ -62,10 +62,15 @@ String buildJsonDocs::build_json_getdata_html(void) {
     root["BMP280_A: "] = values.altitude;
 #elif defined SENSOR_BME280
     read_sensors.read_bme280();
+   // Serial.printf("BME280: Temperature: %f \n", values.temperature);
     root["BME280_T: "] = values.temperature;
     root["BME280_H: "] = values.humidity;
     root["BME280_P: "] = values.pressure;
     root["BME280_A: "] = values.altitude;
+#elif defined SENSOR_SHT3X
+    read_sensors.read_sht3x();
+    root["SHT3X_T: "] = values.temperature;
+    root["SHT3X_H: "] = values.humidity;
 #endif
     //Store JSON in String variable  
     serializeJson(root, webpage);
@@ -186,6 +191,7 @@ void read_bmp280() {
     }
 #endif
 
+#if defined SENSOR_ULTRASONIC_DISTANCE
 // Standalone, so stays here forever, no Web/Wifi activated, on ESP-01 Rx(gpio1) is used for relay as  Ultrasonic sensor reserve gpio0 and gpio2 for i2c
 void switch_light() {
     pinMode(relayPin, OUTPUT);
@@ -200,3 +206,4 @@ while(true) {
         }
     }
 }
+#endif
