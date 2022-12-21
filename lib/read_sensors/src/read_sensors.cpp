@@ -5,7 +5,7 @@
 
 *******************************************************************************/
 /*------------------------------------------------------------------------------
-    Version 0.7     Yasperzee   12'22     Add SHT3x Sensors
+    Version 0.7     Yasperzee   12'22   Add SHT3x Sensor support
     Version 0.7     Yasperzee   12'22   Add BMP280 & BME280 Sensors
     Version 0.6     Yasperzee   12'22   Add HC-SRO4 Ultrasonic Distance Sensor  
     Version 0.5     Yasperzee   12'22   Cleaning and refactoring
@@ -16,9 +16,6 @@
 
 #TODO:
 ------------------------------------------------------------------------------*/
-#if defined(SENSOR_DHT11) || defined(SENSOR_DHT22)
-#include <read_DHT_sensors.h>
-#endif
 
 #include "read_sensors.h"
 #include "eeprom.h"
@@ -28,14 +25,19 @@
 #ifdef SENSOR_IR_THERMOMETER
 #include <Adafruit_MLX90614.h>
 #endif
+#if defined(SENSOR_DHT11) || defined(SENSOR_DHT22)
+#include <read_DHT_sensors.h>
+#endif
 #ifdef SENSOR_BMP280
 #include <Adafruit_BMP280.h>
 #endif
 #ifdef SENSOR_BME280
 #include <Adafruit_BME280.h>
 #endif
+#if defined SENSOR_SHT3X
+#include "Adafruit_SHT31.h"
+#endif
 
-#define SEALEVELPRESSURE_HPA (1013.25) //for Altitude
 extern localEeprom  eeprom_c;
 Values values;
 
@@ -50,6 +52,7 @@ Values values;
 
 #ifdef SENSOR_IR_THERMOMETER
   // IR Thermometer stuff
+  #define EMISSIVITY 1.00  
   extern uint8 emissivity_eeprom_address;
   void set_emissivity();
 #endif
@@ -63,8 +66,10 @@ Values values;
   long duration;
   float distanceCm;
 #endif
+
 #if defined SENSOR_TACOMETER
-Values ReadSensors::get_rpm() {
+    Values ReadSensors::get_rpm() {
+    values.wings = WINGS;
     detachInterrupt(RPM_PIN);
     newtime=millis()-oldtime; //finds the time 
     
@@ -90,7 +95,16 @@ Values ReadSensors::get_rpm() {
 
     return values;
     }
+
+  //IRAM_ATTR void ReadSensors:: isr() {
+  IRAM_ATTR void isr() {
+    rev++;
+    //digitalWrite (DEBUG_PIN, LOW);  
+    //delay(2);  // Some Delay
+    //digitalWrite (DEBUG_PIN, HIGH); 
+    }
 #endif
+
 #if defined SENSOR_IR_THERMOMETER
 Values ReadSensors::get_ir_temperature() {
 
@@ -188,6 +202,7 @@ Values ReadSensors::ReadUltrasonicSensor() {
 #ifdef SENSOR_BMP280
 Values ReadSensors::read_bmp280()
     {
+    #define SEALEVELPRESSURE_HPA (1013.25) //for Altitude
 
     Adafruit_BMP280 bmp280;
 
@@ -241,6 +256,7 @@ Values ReadSensors::read_bmp280()
 #ifdef SENSOR_BME280
 Values ReadSensors::read_bme280()
     {
+    #define SEALEVELPRESSURE_HPA (1013.25) //for Altitude  
     //BME280_ADDRESS                (0x77)
     //BME280_ADDRESS_ALTERNATE      (0x76)
 
@@ -301,35 +317,39 @@ Values ReadSensors::read_bme280()
 } //read_bme280
 #endif
 
-#if defined SENSOR_TACOMETER
-  //IRAM_ATTR void ReadSensors:: isr() {
-IRAM_ATTR void isr() {
-    rev++;
-    //digitalWrite (DEBUG_PIN, LOW);  
-    //delay(2);  // Some Delay
-    //digitalWrite (DEBUG_PIN, HIGH); 
-    }
-#endif
-
 #if defined SENSOR_SHT3X
- Values ReadSensors::read_bme280()
- {
-  values.temperature = sht31.readTemperature();
-  values.humidity = sht31.readHumidity();
+Adafruit_SHT31 sht31 = Adafruit_SHT31();
 
-  if (! isnan(t)) {  // check if 'is not a number'
-    Serial.print("Temp *C = "); Serial.print(values.temperature); Serial.print("\t\t");
-  } else { 
+Values ReadSensors::read_sht3x()
+{
+ if (! sht31.begin(0x44)) {   //Set to 0x45 for alternate i2c addr
     values.temperature  = ERROR_VALUE;
-    Serial.println("Failed to read temperature");
+    values.humidity     = ERROR_VALUE;
+    Serial.println("Couldn't find SHT31");
   }
+else {
+  values.temperature  = (int)(sht31.readTemperature() * 100 + .5); 
+  values.temperature = values.temperature /100; // 2 decimals
+
+  values.humidity = (int)( sht31.readHumidity() * 100 + .5);
+  values.humidity = values.humidity / 100; // 2 decimals
+
+    if (! isnan(values.temperature)) {  // check if 'is not a number'
+      Serial.print("Temp *C = "); Serial.print(values.temperature); Serial.print("\t\t");
+      } 
+    else { 
+      values.temperature  = ERROR_VALUE;
+      Serial.println("Failed to read temperature");
+      }
   
-  if (! isnan(h)) {  // check if 'is not a number'
+  if (! isnan(values.humidity)) {  // check if 'is not a number'
     Serial.print("Hum. % = "); Serial.println(values.humidity);
-  } else { 
+    } 
+  else { 
     values.humidity     = ERROR_VALUE;
     Serial.println("Failed to read humidity");
+    }
   }
-   return values;
+    return values;
  }
 #endif

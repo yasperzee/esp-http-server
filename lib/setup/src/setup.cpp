@@ -16,7 +16,6 @@
 #include <WiFiManager.h> 
 #include "read_sensors.h"
 
-extern Values values;
 extern void set_callbacks();
 extern void set_emissivity();
 
@@ -41,7 +40,6 @@ void do_setup() {
   pinMode(RPM_PIN, INPUT_PULLUP); 
   // Write PPR (PulsesPerRevolution) for Tachometer to EEPROM
   //eeprom_c.write_eeprom(wings_eeprom_address, WINGS);
-  values.wings = WINGS;
 #elif defined SENSOR_IR_THERMOMETER 
   //Do something if any...
 #elif defined SENSOR_ULTRASONIC_DISTANCE

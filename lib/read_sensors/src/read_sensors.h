@@ -7,7 +7,7 @@
   
 *******************************************************************************/
 /*------------------------------------------------------------------------------
-  Version 0.7     Yasperzee   12'22     Add SHT3x Sensors
+  Version 0.7     Yasperzee   12'22     Add SHT3x Sensor support
   Version 0.6     Yasperzee   12'22     Add HC-SRO4 Ultrasonic Distance Sensor  
   Version 0.5     Yasperzee   12'22     Cleaning and refactoring
   Version 0.4     Yasperzee   11'22     IR TEMPERATURE sensor support
@@ -23,12 +23,19 @@
 // constants
 const int ERROR_VALUE = -999.99;
 
-
 #if defined SENSOR_TACOMETER // Tachometer settings
   #define WINGS 1  // PulsesPerRevolution
   #define RPM_PIN 2 // ESP-01
   //#define RPM_PIN 5 // D1 on NodeMcu
 #endif
+
+#if defined SENSOR_BMP280
+  //#define BMP280_ADDR BMP280_ADDRESS //(0x77) SDO = HIGH
+#define BMP280_ADDR BMP280_ADDRESS_ALT  //(0x76) SDO = LOW
+#endif
+
+// #define ALTITUDE 119.0 // Altitude of Tampere-Pirkkala airport, Finland. In meters
+//#define ALTITUDE 129.0  // Altitude of Kalkunvuori, Tampere Finland. In meters
 
   //#define I2C_SCL_PIN 2 //ESP01 
   //#define I2C_SDA_PIN 0 //ESP01 
@@ -57,6 +64,7 @@ class ReadSensors {
   public:
   #if defined SENSOR_TACOMETER
     Values get_rpm(void);
+    
     // IRAM_ATTR void isr();
   #endif  
   #if defined SENSOR_IR_THERMOMETER

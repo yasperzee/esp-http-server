@@ -4,6 +4,7 @@
 
 *******************************************************************************/
 /* -----------------------------------------------------------------------------
+    Version 0.8     Yasperzee   12'22   Add SHT3x Sensor support
     Version 0.7     Yasperzee   12'22   Add BMP280 & BME280 Sensors
     Version 0.4     Yasperzee   12'22   Add HC-SRO4 Ultrasonic Distance Sensor 
     Version 0.3     Yasperzee   12'22   Cleaning and refactoring
