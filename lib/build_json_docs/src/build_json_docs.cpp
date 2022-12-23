@@ -26,7 +26,6 @@ extern uint8 wings_eeprom_address;
 
 extern float rev;
 extern float revTime;
-//extern int wings;
 extern int new_emissivity;
 extern Values values;
 

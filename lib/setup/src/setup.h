@@ -22,8 +22,8 @@
 #define TRACE_INFO
 
 // Select node role
-  #define NODE_HTTP_SERVER
-  //#define NODE_HTTP_CLIENT
+  //#define NODE_HTTP_SERVER
+  #define NODE_HTTP_CLIENT
   //#define NODE_STANDALONE
 
 // Select Sensor
