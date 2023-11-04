@@ -11,3 +11,5 @@ API:
 WiFI AutoConnect:
   WifiManager ( https://github.com/tzapu/WiFiManager )
 
+Initial support for http(REST) client and mqtt client
+Support for several sensors
