@@ -22,8 +22,8 @@
 #define TRACE_INFO
 
 // Select node role
-  //#define NODE_HTTP_SERVER
-  #define NODE_HTTP_CLIENT
+  #define NODE_HTTP_SERVER
+  //#define NODE_HTTP_CLIENT
   //#define NODE_STANDALONE
 
 // Select Sensor
@@ -36,8 +36,8 @@
   //#define SENSOR_ULTRASONIC_DISTANCE
   
   #define APP_SW_VERSION "zee_esp_http_0.2.0_dev"
-  #define HW_VERSION "zee_esp_tacometer_0.1.0_demo"
-  #define NODEMCU_STR "ESP-01s"
+  #define HW_VERSION "zee_esp_weather_0.1.0_demo"
+  #define NODEMCU_STR "ESP-12E" // "ESP-01s"
   #define NODE_FUNCTION "Weather" // e.g. Ultrasonic-distance, Tacometer, IR-Thermometer,  Weather, Environment, Handheld, ...
   #define SENSOR_MODEL_STR "SHT-31" // e.g. Olimex SNS-IR-3-8
 

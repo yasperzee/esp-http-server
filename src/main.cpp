@@ -52,7 +52,7 @@ References:
 #TODO: test OTA
 --------------------------------------------------------------------------------------------*/
 #include "setup.h"
- #include <Arduino.h>
+ //#include <Arduino.h>
 #ifdef NODE_HTTP_SERVER
   #include "node_handlers_server.h"
   extern void handle_iot_rest_remote_client(); // NODE is REST SERVER

@@ -45,7 +45,7 @@ void printInfo() {
     Serial.println(APP_SW_VERSION);
     Serial.print("HW_VERSION is ");
     Serial.println(HW_VERSION);
-    Serial.print("Node_function");
+    Serial.print("Node_function: ");
     Serial.println(NODE_FUNCTION);
     //Serial.print("Wings is ");
     // Read ppr (PulsesPerRevolution) from EEPROM
